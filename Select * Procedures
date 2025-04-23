@@ -1,195 +1,214 @@
 CREATE OR REPLACE PROCEDURE Print_Aeroplanes IS
 BEGIN
   FOR rec IN (SELECT * FROM Aeroplanes) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Aeroplane_ID: ' || rec.Aeroplane_ID ||
-      ', Aeroplane_Type: ' || rec.Aeroplane_Type ||
-      ', Aeroplane_Capacity_ID: ' || rec.Aeroplane_Capacity_ID);
+    DBMS_OUTPUT.PUT_LINE('Aeroplane_ID: ' || rec.Aeroplane_ID ||
+                         ', Aeroplane_Type: ' || rec.Aeroplane_Type ||
+                         ', Aeroplane_Capacity_ID: ' || rec.Aeroplane_Capacity_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20001, 'No aeroplanes found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Goods_Capacity IS
 BEGIN
   FOR rec IN (SELECT * FROM Goods_Aeroplane_Capacity) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Aeroplane_Capacity_ID: ' || rec.Aeroplane_Capacity_ID ||
-      ', Total_Capacity: ' || rec.Total_Capacity);
+    DBMS_OUTPUT.PUT_LINE('Aeroplane_Capacity_ID: ' || rec.Aeroplane_Capacity_ID ||
+                         ', Total_Capacity: ' || rec.Total_Capacity);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20002, 'No goods capacity records found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Passenger_Capacity IS
 BEGIN
   FOR rec IN (SELECT * FROM Passenger_Aeroplane_Capacity) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Aeroplane_Capacity_ID: ' || rec.Aeroplane_Capacity_ID ||
-      ', Business_Class_Seats: ' || rec.Business_Class_Seats ||
-      ', Economy_Class_Seats: ' || rec.Economy_Class_Seats ||
-      ', Premium_Economy_Class_Seats: ' || rec.Premium_Economy_Class_Seats ||
-      ', First_Class_Seats: ' || rec.First_Class_Seats);
+    DBMS_OUTPUT.PUT_LINE('Aeroplane_Capacity_ID: ' || rec.Aeroplane_Capacity_ID ||
+                         ', Business_Class_Seats: ' || rec.Business_Class_Seats ||
+                         ', Economy_Class_Seats: ' || rec.Economy_Class_Seats ||
+                         ', Premium_Economy_Class_Seats: ' || rec.Premium_Economy_Class_Seats ||
+                         ', First_Class_Seats: ' || rec.First_Class_Seats);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20003, 'No passenger capacity records found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Airline_Crew IS
 BEGIN
   FOR rec IN (SELECT * FROM Airline_Crew) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Crew_ID: ' || rec.Crew_ID ||
-      ', Crew_First_Name: ' || rec.Crew_First_Name ||
-      ', Crew_Last_Name: ' || rec.Crew_Last_Name ||
-      ', Crew_Gender: ' || rec.Crew_Gender ||
-      ', Crew_Country: ' || rec.Crew_Country ||
-      ', Airline_ID: ' || rec.Airline_ID);
+    DBMS_OUTPUT.PUT_LINE('Crew_First_Name: ' || rec.Crew_First_Name ||
+                         ', Crew_Last_Name: ' || rec.Crew_Last_Name ||
+                         ', Crew_Gender: ' || rec.Crew_Gender ||
+                         ', Crew_Country: ' || rec.Crew_Country ||
+                         ', Airline_ID: ' || rec.Airline_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20004, 'No airline crew records found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Crew_Phone IS
 BEGIN
   FOR rec IN (SELECT * FROM Airline_Crew_Phone_No) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Crew_ID: ' || rec.Crew_ID ||
-      ', Phone_No: ' || rec.Phone_No);
+    DBMS_OUTPUT.PUT_LINE('Phone_No: ' || rec.Phone_No);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20005, 'No crew phone records found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Airlines IS
 BEGIN
   FOR rec IN (SELECT * FROM Airlines) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Airline_ID: ' || rec.Airline_ID ||
-      ', Airline_Name: ' || rec.Airline_Name ||
-      ', Total_Aeroplanes: ' || rec.Total_Aeroplanes);
+    DBMS_OUTPUT.PUT_LINE('Airline_Name: ' || rec.Airline_Name ||
+                         ', Total_Aeroplanes: ' || rec.Total_Aeroplanes);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20006, 'No airlines found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Airline_Aeroplanes IS
 BEGIN
   FOR rec IN (SELECT * FROM Airline_Aeroplanes) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Airline_Aeroplanes_ID: ' || rec.Airline_Aeroplanes_ID ||
-      ', Airline_ID: ' || rec.Airline_ID ||
-      ', Aeroplane_ID: ' || rec.Aeroplane_ID);
+    DBMS_OUTPUT.PUT_LINE('Airline_ID: ' || rec.Airline_ID ||
+                         ', Aeroplane_ID: ' || rec.Aeroplane_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20007, 'No airline aeroplane records found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Airports IS
 BEGIN
   FOR rec IN (SELECT * FROM Airport) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Airport_ID: ' || rec.Airport_ID ||
-      ', Airport_Name: ' || rec.Airport_Name ||
-      ', Airport_City: ' || rec.Airport_City ||
-      ', Airport_Country: ' || rec.Airport_Country ||
-      ', Total_Terminals: ' || rec.Total_Terminals ||
-      ', Total_Runways: ' || rec.Total_Runways);
+    DBMS_OUTPUT.PUT_LINE('Airport_Name: ' || rec.Airport_Name ||
+                         ', Airport_City: ' || rec.Airport_City ||
+                         ', Airport_Country: ' || rec.Airport_Country ||
+                         ', Total_Terminals: ' || rec.Total_Terminals ||
+                         ', Total_Runways: ' || rec.Total_Runways);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20008, 'No airports found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Flight_Crew IS
 BEGIN
   FOR rec IN (SELECT * FROM Flight_Crew) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Flight_Crew_ID: ' || rec.Flight_Crew_ID ||
-      ', Flight_ID: ' || rec.Flight_ID ||
-      ', Pilot_ID: ' || rec.Pilot_ID ||
-      ', Copilot_ID: ' || rec.Copilot_ID ||
-      ', No_of_Air_Hostess: ' || rec.No_of_Air_Hostess ||
-      ', Head_Air_Hostess_ID: ' || rec.Head_Air_Hostess_ID);
+    DBMS_OUTPUT.PUT_LINE('Flight_ID: ' || rec.Flight_ID ||
+                         ', Pilot_ID: ' || rec.Pilot_ID ||
+                         ', Copilot_ID: ' || rec.Copilot_ID ||
+                         ', No_of_Air_Hostess: ' || rec.No_of_Air_Hostess ||
+                         ', Head_Air_Hostess_ID: ' || rec.Head_Air_Hostess_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20009, 'No flight crew records found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Flight_Crew_Hostess IS
 BEGIN
   FOR rec IN (SELECT * FROM Flight_Crew_Hostess) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Flight_Crew_ID: ' || rec.Flight_Crew_ID ||
-      ', Airline_Crew_ID: ' || rec.Airline_Crew_ID);
+    DBMS_OUTPUT.PUT_LINE('Flight_Crew_ID: ' || rec.Flight_Crew_ID ||
+                         ', Airline_Crew_ID: ' || rec.Airline_Crew_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20010, 'No flight crew hostess records found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Scheduled_Flights IS
 BEGIN
   FOR rec IN (SELECT * FROM Scheduled_Flights) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Flight_Scheduled_ID: ' || rec.Flight_Scheduled_ID ||
-      ', Airline_Aeroplane_ID: ' || rec.Airline_Aeroplane_ID ||
-      ', Departure_Airport_ID: ' || rec.Departure_Airport_ID ||
-      ', Arrival_Airport_ID: ' || rec.Arrival_Airport_ID ||
-      ', Flight_Type: ' || rec.Flight_Type ||
-      ', Arrival_Date_Time: ' || rec.Arrival_Date_Time ||
-      ', Departure_Date_Time: ' || rec.Departure_Date_Time ||
-      ', Destination_Distance: ' || rec.Destination_Distance ||
-      ', Arrival_Terminal_ID: ' || rec.Arrival_Terminal_ID ||
-      ', Departure_Terminal_ID: ' || rec.Departure_Terminal_ID ||
-      ', Arrival_Runway_ID: ' || rec.Arrival_Runway_ID ||
-      ', Departure_Runway_ID: ' || rec.Departure_Runway_ID);
+    DBMS_OUTPUT.PUT_LINE('Airline_Aeroplane_ID: ' || rec.Airline_Aeroplane_ID ||
+                         ', Departure_Airport_ID: ' || rec.Departure_Airport_ID ||
+                         ', Arrival_Airport_ID: ' || rec.Arrival_Airport_ID ||
+                         ', Flight_Type: ' || rec.Flight_Type ||
+                         ', Arrival_Date_Time: ' || rec.Arrival_Date_Time ||
+                         ', Departure_Date_Time: ' || rec.Departure_Date_Time ||
+                         ', Destination_Distance: ' || rec.Destination_Distance ||
+                         ', Arrival_Terminal_ID: ' || rec.Arrival_Terminal_ID ||
+                         ', Departure_Terminal_ID: ' || rec.Departure_Terminal_ID ||
+                         ', Arrival_Runway_ID: ' || rec.Arrival_Runway_ID ||
+                         ', Departure_Runway_ID: ' || rec.Departure_Runway_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20011, 'No scheduled flights found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Passengers IS
 BEGIN
   FOR rec IN (SELECT * FROM Passengers) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Passenger_ID: ' || rec.Passenger_ID ||
-      ', Passenger_First_Name: ' || rec.Passenger_First_Name ||
-      ', Passenger_Last_Name: ' || rec.Passenger_Last_Name ||
-      ', Passenger_Gender: ' || rec.Passenger_Gender ||
-      ', Passenger_Age: ' || rec.Passenger_Age);
+    DBMS_OUTPUT.PUT_LINE('Passenger_First_Name: ' || rec.Passenger_First_Name ||
+                         ', Passenger_Last_Name: ' || rec.Passenger_Last_Name ||
+                         ', Passenger_Gender: ' || rec.Passenger_Gender ||
+                         ', Passenger_Age: ' || rec.Passenger_Age);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20012, 'No passengers found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Passengers_Traveling IS
 BEGIN
   FOR rec IN (SELECT * FROM Passengers_Traveling) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Passenger_Traveling_ID: ' || rec.Passenger_Traveling_ID ||
-      ', Passenger_ID: ' || rec.Passenger_ID ||
-      ', Flight_ID: ' || rec.Flight_ID);
+    DBMS_OUTPUT.PUT_LINE('Passenger_ID: ' || rec.Passenger_ID ||
+                         ', Flight_ID: ' || rec.Flight_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20013, 'No passengers traveling records found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Passenger_Phone IS
 BEGIN
   FOR rec IN (SELECT * FROM Passenger_Phone_No) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Passenger_ID: ' || rec.Passenger_ID ||
-      ', Phone_No: ' || rec.Phone_No);
+    DBMS_OUTPUT.PUT_LINE('Phone_No: ' || rec.Phone_No);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20014, 'No passenger phone records found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Runways IS
 BEGIN
   FOR rec IN (SELECT * FROM Runways) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Runway_ID: ' || rec.Runway_ID ||
-      ', Runway_No: ' || rec.Runway_No ||
-      ', Runway_Name: ' || rec.Runway_Name ||
-      ', Airport_ID: ' || rec.Airport_ID);
+    DBMS_OUTPUT.PUT_LINE('Runway_No: ' || rec.Runway_No ||
+                         ', Runway_Name: ' || rec.Runway_Name ||
+                         ', Airport_ID: ' || rec.Airport_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20015, 'No runways found.');
 END;
 
 
 CREATE OR REPLACE PROCEDURE Print_Terminals IS
 BEGIN
   FOR rec IN (SELECT * FROM Terminals) LOOP
-    DBMS_OUTPUT.PUT_LINE(
-      'Terminal_ID: ' || rec.Terminal_ID ||
-      ', Terminal_No: ' || rec.Terminal_No ||
-      ', Terminal_Name: ' || rec.Terminal_Name ||
-      ', Airport_ID: ' || rec.Airport_ID);
+    DBMS_OUTPUT.PUT_LINE('Terminal_No: ' || rec.Terminal_No ||
+                         ', Terminal_Name: ' || rec.Terminal_Name ||
+                         ', Airport_ID: ' || rec.Airport_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20016, 'No terminals found.');
 END;
-
