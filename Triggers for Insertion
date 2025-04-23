@@ -1,0 +1,126 @@
+CREATE OR REPLACE TRIGGER trg_insert_aeroplanes
+AFTER INSERT ON Aeroplanes
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Aeroplanes: Aeroplane_ID = ' || :NEW.Aeroplane_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_goods_capacity
+AFTER INSERT ON Goods_Aeroplane_Capacity
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Goods_Aeroplane_Capacity: Aeroplane_Capacity_ID = ' || :NEW.Aeroplane_Capacity_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_passenger_capacity
+AFTER INSERT ON Passenger_Aeroplane_Capacity
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Passenger_Aeroplane_Capacity: Aeroplane_Capacity_ID = ' || :NEW.Aeroplane_Capacity_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_airline_crew
+AFTER INSERT ON Airline_Crew
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Airline_Crew: Crew_ID = ' || :NEW.Crew_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_crew_phone
+AFTER INSERT ON Airline_Crew_Phone_No
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Airline_Crew_Phone_No: Crew_ID = ' || :NEW.Crew_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_airlines
+AFTER INSERT ON Airlines
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Airlines: Airline_ID = ' || :NEW.Airline_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_airline_aeroplanes
+AFTER INSERT ON Airline_Aeroplanes
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Airline_Aeroplanes: Airline_Aeroplanes_ID = ' || :NEW.Airline_Aeroplanes_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_airport
+AFTER INSERT ON Airport
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Airport: Airport_ID = ' || :NEW.Airport_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_flight_crew
+AFTER INSERT ON Flight_Crew
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Flight_Crew: Flight_Crew_ID = ' || :NEW.Flight_Crew_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_flight_crew_hostess
+AFTER INSERT ON Flight_Crew_Hostess
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Flight_Crew_Hostess: Flight_Crew_ID = ' || :NEW.Flight_Crew_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_scheduled_flights
+AFTER INSERT ON Scheduled_Flights
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Scheduled_Flights: Flight_Scheduled_ID = ' || :NEW.Flight_Scheduled_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_passengers
+AFTER INSERT ON Passengers
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Passengers: Passenger_ID = ' || :NEW.Passenger_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_passengers_traveling
+AFTER INSERT ON Passengers_Traveling
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Passengers_Traveling: Passenger_Traveling_ID = ' || :NEW.Passenger_Traveling_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_passenger_phone
+AFTER INSERT ON Passenger_Phone_No
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Passenger_Phone_No: Passenger_ID = ' || :NEW.Passenger_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_runways
+AFTER INSERT ON Runways
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Runways: Runway_ID = ' || :NEW.Runway_ID || '');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_insert_terminals
+AFTER INSERT ON Terminals
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' Successfully Inserted into Terminals: Terminal_ID = ' || :NEW.Terminal_ID || '');
+END;
