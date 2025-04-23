@@ -1,0 +1,230 @@
+-- Airline_Crew_Phone_No.Crew_ID references Airline_Crew.Crew_ID
+CREATE OR REPLACE TRIGGER trg_fk_crew_phone_crew_id
+BEFORE INSERT OR UPDATE OF Crew_ID ON Airline_Crew_Phone_No
+FOR EACH ROW
+DECLARE
+  v_exists NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_exists FROM Airline_Crew WHERE Crew_ID = :NEW.Crew_ID;
+  IF v_exists = 0 THEN
+    RAISE_APPLICATION_ERROR(-22001, 'Referenced Crew_ID does not exist in Airline_Crew');
+  END IF;
+END;
+
+
+-- Airline_Aeroplanes.Airline_ID references Airlines.Airline_ID
+-- Airline_Aeroplanes.Aeroplane_ID references Aeroplanes.Aeroplane_ID
+CREATE OR REPLACE TRIGGER trg_fk_airline_aeroplanes_fk
+BEFORE INSERT OR UPDATE OF Airline_ID, Aeroplane_ID ON Airline_Aeroplanes
+FOR EACH ROW
+DECLARE
+  v_airline NUMBER;
+  v_aeroplane NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_airline FROM Airlines WHERE Airline_ID = :NEW.Airline_ID;
+  IF v_airline = 0 THEN
+    RAISE_APPLICATION_ERROR(-22002, 'Referenced Airline_ID does not exist in Airlines');
+  END IF;
+  SELECT COUNT(*) INTO v_aeroplane FROM Aeroplanes WHERE Aeroplane_ID = :NEW.Aeroplane_ID;
+  IF v_aeroplane = 0 THEN
+    RAISE_APPLICATION_ERROR(-22003, 'Referenced Aeroplane_ID does not exist in Aeroplanes');
+  END IF;
+END;
+
+
+-- Flight_Crew_Hostess.Flight_Crew_ID references Flight_Crew.Flight_Crew_ID
+-- Flight_Crew_Hostess.Airline_Crew_ID references Airline_Crew.Crew_ID
+CREATE OR REPLACE TRIGGER trg_fk_flight_crew_hostess_fk
+BEFORE INSERT OR UPDATE OF Flight_Crew_ID, Airline_Crew_ID ON Flight_Crew_Hostess
+FOR EACH ROW
+DECLARE
+  v_flight_crew NUMBER;
+  v_airline_crew NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_flight_crew FROM Flight_Crew WHERE Flight_Crew_ID = :NEW.Flight_Crew_ID;
+  IF v_flight_crew = 0 THEN
+    RAISE_APPLICATION_ERROR(-22004, 'Referenced Flight_Crew_ID does not exist in Flight_Crew');
+  END IF;
+  SELECT COUNT(*) INTO v_airline_crew FROM Airline_Crew WHERE Crew_ID = :NEW.Airline_Crew_ID;
+  IF v_airline_crew = 0 THEN
+    RAISE_APPLICATION_ERROR(-22005, 'Referenced Airline_Crew_ID does not exist in Airline_Crew');
+  END IF;
+END;
+
+
+-- Passengers_Traveling.Passenger_ID references Passengers.Passenger_ID
+-- Passengers_Traveling.Flight_Scheduled_ID references Scheduled_Flights.Flight_Scheduled_ID
+CREATE OR REPLACE TRIGGER trg_fk_passengers_traveling_fk
+BEFORE INSERT OR UPDATE OF Passenger_ID, Flight_Scheduled_ID ON Passengers_Traveling
+FOR EACH ROW
+DECLARE
+  v_passenger NUMBER;
+  v_flight_schedule NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_passenger FROM Passengers WHERE Passenger_ID = :NEW.Passenger_ID;
+  IF v_passenger = 0 THEN
+    RAISE_APPLICATION_ERROR(-22006, 'Referenced Passenger_ID does not exist in Passengers');
+  END IF;
+  SELECT COUNT(*) INTO v_flight_schedule FROM Scheduled_Flights WHERE Flight_Scheduled_ID = :NEW.Flight_Scheduled_ID;
+  IF v_flight_schedule = 0 THEN
+    RAISE_APPLICATION_ERROR(-22007, 'Referenced Flight_Scheduled_ID does not exist in Scheduled_Flights');
+  END IF;
+END;
+
+
+-- Passenger_Phone_No.Passenger_ID references Passengers.Passenger_ID
+CREATE OR REPLACE TRIGGER trg_fk_passenger_phone_fk
+BEFORE INSERT OR UPDATE OF Passenger_ID ON Passenger_Phone_No
+FOR EACH ROW
+DECLARE
+  v_exists NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_exists FROM Passengers WHERE Passenger_ID = :NEW.Passenger_ID;
+  IF v_exists = 0 THEN
+    RAISE_APPLICATION_ERROR(-22008, 'Referenced Passenger_ID does not exist in Passengers');
+  END IF;
+END;
+
+
+-- Additional foreign key triggers for remaining relationships
+-- Aeroplanes.Aeroplane_Capacity_ID → Goods and Passenger_Aeroplane_Capacity
+CREATE OR REPLACE TRIGGER trg_fk_aeroplanes_capacity
+BEFORE INSERT OR UPDATE OF Aeroplane_Capacity_ID ON Aeroplanes
+FOR EACH ROW
+DECLARE
+  v_goods NUMBER;
+  v_passenger NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_goods FROM Goods_Aeroplane_Capacity WHERE Aeroplane_Capacity_ID = :NEW.Aeroplane_Capacity_ID;
+  SELECT COUNT(*) INTO v_passenger FROM Passenger_Aeroplane_Capacity WHERE Aeroplane_Capacity_ID = :NEW.Aeroplane_Capacity_ID;
+  IF v_goods = 0 AND v_passenger = 0 THEN
+    RAISE_APPLICATION_ERROR(-22009, 'Referenced Aeroplane_Capacity_ID not found in either capacity table');
+  END IF;
+END;
+
+
+-- Airline_Crew.Airline_ID → Airlines
+CREATE OR REPLACE TRIGGER trg_fk_airline_crew_airline
+BEFORE INSERT OR UPDATE OF Airline_ID ON Airline_Crew
+FOR EACH ROW
+DECLARE
+  v_airline NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_airline FROM Airlines WHERE Airline_ID = :NEW.Airline_ID;
+  IF v_airline = 0 THEN
+    RAISE_APPLICATION_ERROR(-22010, 'Referenced Airline_ID does not exist in Airlines');
+  END IF;
+END;
+
+
+-- Flight_Crew.Pilot_ID, Copilot_ID, Head_Air_Hostess_ID → Airline_Crew
+CREATE OR REPLACE TRIGGER trg_fk_flight_crew_roles
+BEFORE INSERT OR UPDATE OF Pilot_ID, Copilot_ID, Head_Air_Hostess_ID ON Flight_Crew
+FOR EACH ROW
+DECLARE
+  v_pilot NUMBER;
+  v_copilot NUMBER;
+  v_head_hostess NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_pilot FROM Airline_Crew WHERE Crew_ID = :NEW.Pilot_ID;
+  SELECT COUNT(*) INTO v_copilot FROM Airline_Crew WHERE Crew_ID = :NEW.Copilot_ID;
+  SELECT COUNT(*) INTO v_head_hostess FROM Airline_Crew WHERE Crew_ID = :NEW.Head_Air_Hostess_ID;
+  IF v_pilot = 0 THEN
+    RAISE_APPLICATION_ERROR(-22011, 'Pilot_ID not found in Airline_Crew');
+  END IF;
+  IF v_copilot = 0 THEN
+    RAISE_APPLICATION_ERROR(-22012, 'Copilot_ID not found in Airline_Crew');
+  END IF;
+  IF v_head_hostess = 0 THEN
+    RAISE_APPLICATION_ERROR(-22013, 'Head_Air_Hostess_ID not found in Airline_Crew');
+  END IF;
+END;
+
+
+-- Flight_Crew.Flight_ID → Scheduled_Flights
+CREATE OR REPLACE TRIGGER trg_fk_flight_crew_flight
+BEFORE INSERT OR UPDATE OF Flight_ID ON Flight_Crew
+FOR EACH ROW
+DECLARE
+  v_flight NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_flight FROM Scheduled_Flights WHERE Flight_Scheduled_ID = :NEW.Flight_ID;
+  IF v_flight = 0 THEN
+    RAISE_APPLICATION_ERROR(-22014, 'Referenced Flight_ID not found in Scheduled_Flights');
+  END IF;
+END;
+
+
+-- Scheduled_Flights.Airline_Aeroplane_ID → Airline_Aeroplanes
+CREATE OR REPLACE TRIGGER trg_fk_scheduled_flights_plane
+BEFORE INSERT OR UPDATE OF Airline_Aeroplane_ID ON Scheduled_Flights
+FOR EACH ROW
+DECLARE
+  v_plane NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_plane FROM Airline_Aeroplanes WHERE Airline_Aeroplanes_ID = :NEW.Airline_Aeroplane_ID;
+  IF v_plane = 0 THEN
+    RAISE_APPLICATION_ERROR(-22015, 'Airline_Aeroplane_ID not found in Airline_Aeroplanes');
+  END IF;
+END;
+
+
+-- Scheduled_Flights foreign keys for Airports, Terminals, and Runways
+CREATE OR REPLACE TRIGGER trg_fk_scheduled_flights_infra
+BEFORE INSERT OR UPDATE OF Departure_Airport_ID, Arrival_Airport_ID,
+    Arrival_Terminal_ID, Departure_Terminal_ID,
+    Arrival_Runway_ID, Departure_Runway_ID ON Scheduled_Flights
+FOR EACH ROW
+DECLARE
+  v_airport_dep NUMBER;
+  v_airport_arr NUMBER;
+  v_term_arr NUMBER;
+  v_term_dep NUMBER;
+  v_runway_arr NUMBER;
+  v_runway_dep NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_airport_dep FROM Airport WHERE Airport_ID = :NEW.Departure_Airport_ID;
+  SELECT COUNT(*) INTO v_airport_arr FROM Airport WHERE Airport_ID = :NEW.Arrival_Airport_ID;
+  SELECT COUNT(*) INTO v_term_arr FROM Terminals WHERE Terminal_ID = :NEW.Arrival_Terminal_ID;
+  SELECT COUNT(*) INTO v_term_dep FROM Terminals WHERE Terminal_ID = :NEW.Departure_Terminal_ID;
+  SELECT COUNT(*) INTO v_runway_arr FROM Runways WHERE Runway_ID = :NEW.Arrival_Runway_ID;
+  SELECT COUNT(*) INTO v_runway_dep FROM Runways WHERE Runway_ID = :NEW.Departure_Runway_ID;
+
+  IF v_airport_dep = 0 OR v_airport_arr = 0 THEN
+    RAISE_APPLICATION_ERROR(-22016, 'One or both referenced Airport_IDs not found');
+  END IF;
+  IF v_term_arr = 0 OR v_term_dep = 0 THEN
+    RAISE_APPLICATION_ERROR(-22017, 'One or both referenced Terminal_IDs not found');
+  END IF;
+  IF v_runway_arr = 0 OR v_runway_dep = 0 THEN
+    RAISE_APPLICATION_ERROR(-22018, 'One or both referenced Runway_IDs not found');
+  END IF;
+END;
+
+
+-- Runways.Airport_ID → Airport
+CREATE OR REPLACE TRIGGER trg_fk_runway_airport
+BEFORE INSERT OR UPDATE OF Airport_ID ON Runways
+FOR EACH ROW
+DECLARE
+  v_airport NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_airport FROM Airport WHERE Airport_ID = :NEW.Airport_ID;
+  IF v_airport = 0 THEN
+    RAISE_APPLICATION_ERROR(-22019, 'Referenced Airport_ID not found for Runway');
+  END IF;
+END;
+
+
+-- Terminals.Airport_ID → Airport
+CREATE OR REPLACE TRIGGER trg_fk_terminal_airport
+BEFORE INSERT OR UPDATE OF Airport_ID ON Terminals
+FOR EACH ROW
+DECLARE
+  v_airport NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_airport FROM Airport WHERE Airport_ID = :NEW.Airport_ID;
+  IF v_airport = 0 THEN
+    RAISE_APPLICATION_ERROR(-22020, 'Referenced Airport_ID not found for Terminal');
+  END IF;
+END;
