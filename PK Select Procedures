@@ -5,6 +5,9 @@ BEGIN
                          ', Aeroplane_Type: ' || rec.Aeroplane_Type ||
                          ', Aeroplane_Capacity_ID: ' || rec.Aeroplane_Capacity_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Aeroplane_ID ' || p_Aeroplane_ID);
 END;
 
 
@@ -14,6 +17,9 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Aeroplane_Capacity_ID: ' || rec.Aeroplane_Capacity_ID ||
                          ', Total_Capacity: ' || rec.Total_Capacity);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Aeroplane_Capacity_ID ' || p_ID);
 END;
 
 
@@ -26,6 +32,9 @@ BEGIN
                          ', Premium_Economy_Class_Seats: ' || rec.Premium_Economy_Class_Seats ||
                          ', First_Class_Seats: ' || rec.First_Class_Seats);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Aeroplane_Capacity_ID ' || p_ID);
 END;
 
 
@@ -39,6 +48,9 @@ BEGIN
                          ', Crew_Country: ' || rec.Crew_Country ||
                          ', Airline_ID: ' || rec.Airline_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Crew_ID ' || p_ID);
 END;
 
 
@@ -47,6 +59,9 @@ BEGIN
   FOR rec IN (SELECT * FROM Airline_Crew_Phone_No WHERE Crew_ID = p_ID) LOOP
     DBMS_OUTPUT.PUT_LINE('Crew_ID: ' || rec.Crew_ID || ', Phone_No: ' || rec.Phone_No);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No phone found for Crew_ID ' || p_ID);
 END;
 
 
@@ -57,6 +72,9 @@ BEGIN
                          ', Airline_Name: ' || rec.Airline_Name ||
                          ', Total_Aeroplanes: ' || rec.Total_Aeroplanes);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Airline_ID ' || p_ID);
 END;
 
 
@@ -67,6 +85,9 @@ BEGIN
                          ', Airline_ID: ' || rec.Airline_ID ||
                          ', Aeroplane_ID: ' || rec.Aeroplane_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Airline_Aeroplanes_ID ' || p_ID);
 END;
 
 
@@ -80,6 +101,9 @@ BEGIN
                          ', Total_Terminals: ' || rec.Total_Terminals ||
                          ', Total_Runways: ' || rec.Total_Runways);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Airport_ID ' || p_ID);
 END;
 
 
@@ -93,6 +117,9 @@ BEGIN
                          ', No_of_Air_Hostess: ' || rec.No_of_Air_Hostess ||
                          ', Head_Air_Hostess_ID: ' || rec.Head_Air_Hostess_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Flight_Crew_ID ' || p_ID);
 END;
 
 
@@ -102,6 +129,9 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Flight_Crew_ID: ' || rec.Flight_Crew_ID ||
                          ', Airline_Crew_ID: ' || rec.Airline_Crew_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Flight_Crew_ID ' || p_ID);
 END;
 
 
@@ -121,6 +151,9 @@ BEGIN
                          ', Arrival_Runway_ID: ' || rec.Arrival_Runway_ID ||
                          ', Departure_Runway_ID: ' || rec.Departure_Runway_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Flight_Scheduled_ID ' || p_ID);
 END;
 
 
@@ -133,6 +166,9 @@ BEGIN
                          ', Passenger_Gender: ' || rec.Passenger_Gender ||
                          ', Passenger_Age: ' || rec.Passenger_Age);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Passenger_ID ' || p_ID);
 END;
 
 
@@ -143,6 +179,9 @@ BEGIN
                          ', Passenger_ID: ' || rec.Passenger_ID ||
                          ', Flight_ID: ' || rec.Flight_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Passenger_Traveling_ID ' || p_ID);
 END;
 
 
@@ -151,6 +190,9 @@ BEGIN
   FOR rec IN (SELECT * FROM Passenger_Phone_No WHERE Passenger_ID = p_ID) LOOP
     DBMS_OUTPUT.PUT_LINE('Passenger_ID: ' || rec.Passenger_ID || ', Phone_No: ' || rec.Phone_No);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No phone found for Passenger_ID ' || p_ID);
 END;
 
 
@@ -162,6 +204,9 @@ BEGIN
                          ', Runway_Name: ' || rec.Runway_Name ||
                          ', Airport_ID: ' || rec.Airport_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Runway_ID ' || p_ID);
 END;
 
 
@@ -173,4 +218,7 @@ BEGIN
                          ', Terminal_Name: ' || rec.Terminal_Name ||
                          ', Airport_ID: ' || rec.Airport_ID);
   END LOOP;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found for Terminal_ID ' || p_ID);
 END;
