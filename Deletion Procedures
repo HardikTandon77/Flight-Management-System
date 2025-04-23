@@ -1,0 +1,130 @@
+CREATE OR REPLACE PROCEDURE Delete_Aeroplane (
+  p_Aeroplane_ID INT
+) IS
+BEGIN
+  DELETE FROM Aeroplanes WHERE Aeroplane_ID = p_Aeroplane_ID;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Goods_Capacity (
+  p_Capacity_ID INT
+) IS
+BEGIN
+  DELETE FROM Goods_Aeroplane_Capacity WHERE Aeroplane_Capacity_ID = p_Capacity_ID;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Passenger_Capacity (
+  p_Capacity_ID INT
+) IS
+BEGIN
+  DELETE FROM Passenger_Aeroplane_Capacity WHERE Aeroplane_Capacity_ID = p_Capacity_ID;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Airline_Crew (
+  p_Crew_ID INT
+) IS
+BEGIN
+  DELETE FROM Airline_Crew WHERE Crew_ID = p_Crew_ID;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Crew_Phone (
+  p_Crew_ID INT,
+  p_Phone_No INT
+) IS
+BEGIN
+  DELETE FROM Airline_Crew_Phone_No WHERE Crew_ID = p_Crew_ID AND Phone_No = p_Phone_No;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Airline (
+  p_Airline_ID INT
+) IS
+BEGIN
+  DELETE FROM Airlines WHERE Airline_ID = p_Airline_ID;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Airline_Aeroplane (
+  p_ID INT
+) IS
+BEGIN
+  DELETE FROM Airline_Aeroplanes WHERE Airline_Aeroplanes_ID = p_ID;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Airport (
+  p_ID INT
+) IS
+BEGIN
+  DELETE FROM Airport WHERE Airport_ID = p_ID;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Flight_Crew (
+  p_ID INT
+) IS
+BEGIN
+  DELETE FROM Flight_Crew WHERE Flight_Crew_ID = p_ID;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Flight_Crew_Hostess (
+  p_Flight_Crew_ID INT,
+  p_Crew_ID INT
+) IS
+BEGIN
+  DELETE FROM Flight_Crew_Hostess WHERE Flight_Crew_ID = p_Flight_Crew_ID AND Airline_Crew_ID = p_Crew_ID;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Scheduled_Flight (
+  p_ID INT
+) IS
+BEGIN
+  DELETE FROM Scheduled_Flights WHERE Flight_Scheduled_ID = p_ID;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Passenger (
+  p_ID INT
+) IS
+BEGIN
+  DELETE FROM Passengers WHERE Passenger_ID = p_ID;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Passenger_Traveling (
+  p_Traveling_ID INT
+) IS
+BEGIN
+  DELETE FROM Passengers_Traveling WHERE Passenger_Traveling_ID = p_Traveling_ID;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Passenger_Phone (
+  p_Passenger_ID INT,
+  p_Phone_No INT
+) IS
+BEGIN
+  DELETE FROM Passenger_Phone_No WHERE Passenger_ID = p_Passenger_ID AND Phone_No = p_Phone_No;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Runway (
+  p_ID INT
+) IS
+BEGIN
+  DELETE FROM Runways WHERE Runway_ID = p_ID;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Delete_Terminal (
+  p_ID INT
+) IS
+BEGIN
+  DELETE FROM Terminals WHERE Terminal_ID = p_ID;
+END;
+
