@@ -1,0 +1,170 @@
+INSERT INTO Airlines (Airline_ID, Airline_Name, Total_Aeroplanes) VALUES (1, 'Air India', 12);
+INSERT INTO Airlines (Airline_ID, Airline_Name, Total_Aeroplanes) VALUES (2, 'Indigo', 13);
+INSERT INTO Airlines (Airline_ID, Airline_Name, Total_Aeroplanes) VALUES (3, 'SpiceJet', 9);
+INSERT INTO Airlines (Airline_ID, Airline_Name, Total_Aeroplanes) VALUES (4, 'Jet Airways', 5);
+INSERT INTO Airlines (Airline_ID, Airline_Name, Total_Aeroplanes) VALUES (5, 'Akshat Airlines', 7);
+
+INSERT INTO Airport (Airport_ID, Airport_Name, Airport_City, Airport_Country, Total_Terminals, Total_Runways) 
+VALUES (1, 'Indra Gandhi International Airport', 'Delhi', 'India', 7, 5);
+INSERT INTO Airport (Airport_ID, Airport_Name, Airport_City, Airport_Country, Total_Terminals, Total_Runways) 
+VALUES (2, 'Chhatrapati Shivaji Maharaj Airport', 'Maharashtra', 'India', 5, 3);
+INSERT INTO Airport (Airport_ID, Airport_Name, Airport_City, Airport_Country, Total_Terminals, Total_Runways) 
+VALUES (3, 'Netaji Shubhash Chandra Airport', 'West Bengal', 'India', 4, 2);
+INSERT INTO Airport (Airport_ID, Airport_Name, Airport_City, Airport_Country, Total_Terminals, Total_Runways) 
+VALUES (4, 'Changi Airport', 'Changi', 'Singapore', 8, 4);
+INSERT INTO Airport (Airport_ID, Airport_Name, Airport_City, Airport_Country, Total_Terminals, Total_Runways) 
+VALUES (5, 'Tokyo Haneda Airport', 'Tokyo', 'Japan', 3, 2);
+
+INSERT INTO Goods_Aeroplane_Capacity (Aeroplane_Capacity_ID, Total_Capacity) VALUES (1,100);
+INSERT INTO Goods_Aeroplane_Capacity (Aeroplane_Capacity_ID, Total_Capacity) VALUES (2,200);
+INSERT INTO Goods_Aeroplane_Capacity (Aeroplane_Capacity_ID, Total_Capacity) VALUES (3,250);
+INSERT INTO Goods_Aeroplane_Capacity (Aeroplane_Capacity_ID, Total_Capacity) VALUES (4,500);
+INSERT INTO Goods_Aeroplane_Capacity (Aeroplane_Capacity_ID, Total_Capacity) VALUES (5,1000);
+
+INSERT INTO Passenger_Aeroplane_Capacity (Aeroplane_Capacity_ID, Business_Class_Seats, Economy_Class_Seats, Premium_Economy_Class_Seats, First_Class_Seats)
+VALUES (1, 50, 45, 0, 150);
+INSERT INTO Passenger_Aeroplane_Capacity (Aeroplane_Capacity_ID, Business_Class_Seats, Economy_Class_Seats, Premium_Economy_Class_Seats, First_Class_Seats)
+VALUES (2, 50, 100, 0, 200);
+INSERT INTO Passenger_Aeroplane_Capacity (Aeroplane_Capacity_ID, Business_Class_Seats, Economy_Class_Seats, Premium_Economy_Class_Seats, First_Class_Seats)
+VALUES (3, 50, 0, 0, 250);
+INSERT INTO Passenger_Aeroplane_Capacity (Aeroplane_Capacity_ID, Business_Class_Seats, Economy_Class_Seats, Premium_Economy_Class_Seats, First_Class_Seats)
+VALUES (4, 100, 0, 30, 300);
+INSERT INTO Passenger_Aeroplane_Capacity (Aeroplane_Capacity_ID, Business_Class_Seats, Economy_Class_Seats, Premium_Economy_Class_Seats, First_Class_Seats)
+VALUES (5, 0, 0, 0, 500);
+
+INSERT INTO Aeroplanes (Aeroplane_ID, Aeroplane_Type, Aeroplane_Capacity_ID) VALUES (1,'passenger',1);
+INSERT INTO Aeroplanes (Aeroplane_ID, Aeroplane_Type, Aeroplane_Capacity_ID) VALUES (2,'passenger',2);
+INSERT INTO Aeroplanes (Aeroplane_ID, Aeroplane_Type, Aeroplane_Capacity_ID) VALUES (3,'passenger',1);
+INSERT INTO Aeroplanes (Aeroplane_ID, Aeroplane_Type, Aeroplane_Capacity_ID) VALUES (4,'goods',1);
+INSERT INTO Aeroplanes (Aeroplane_ID, Aeroplane_Type, Aeroplane_Capacity_ID) VALUES (5,'goods',1);
+
+INSERT INTO Airline_Aeroplanes (Airline_Aeroplanes_ID, Airline_ID, Aeroplane_ID) VALUES (1,1,1);
+INSERT INTO Airline_Aeroplanes (Airline_Aeroplanes_ID, Airline_ID, Aeroplane_ID) VALUES (2,2,1);
+INSERT INTO Airline_Aeroplanes (Airline_Aeroplanes_ID, Airline_ID, Aeroplane_ID) VALUES (3,1,2);
+INSERT INTO Airline_Aeroplanes (Airline_Aeroplanes_ID, Airline_ID, Aeroplane_ID) VALUES (4,3,4);
+INSERT INTO Airline_Aeroplanes (Airline_Aeroplanes_ID, Airline_ID, Aeroplane_ID) VALUES (5,1,1);
+
+INSERT INTO Airline_Crew (Crew_ID, Crew_First_Name, Crew_Last_Name, Crew_Gender, Crew_Country, Airline_ID)
+VALUES (1,'Rohit','Dayal','M','India',1);
+INSERT INTO Airline_Crew (Crew_ID, Crew_First_Name, Crew_Last_Name, Crew_Gender, Crew_Country, Airline_ID)
+VALUES (2,'Payal','Sharma','F','India',1);
+INSERT INTO Airline_Crew (Crew_ID, Crew_First_Name, Crew_Last_Name, Crew_Gender, Crew_Country, Airline_ID)
+VALUES (3,'Abhishek','Kumar','M','India',2);
+INSERT INTO Airline_Crew (Crew_ID, Crew_First_Name, Crew_Last_Name, Crew_Gender, Crew_Country, Airline_ID)
+VALUES (4,'Divakar','Singh','M','India',2);
+INSERT INTO Airline_Crew (Crew_ID, Crew_First_Name, Crew_Last_Name, Crew_Gender, Crew_Country, Airline_ID)
+VALUES (5,'Meenal','Kumari','F','India',1);
+INSERT INTO Airline_Crew (Crew_ID, Crew_First_Name, Crew_Last_Name, Crew_Gender, Crew_Country, Airline_ID)
+VALUES (6,'Deepti','Sharma','F','India',1);
+INSERT INTO Airline_Crew (Crew_ID, Crew_First_Name, Crew_Last_Name, Crew_Gender, Crew_Country, Airline_ID)
+VALUES (7,'Mrinalini','Thakur','F','India',1);
+INSERT INTO Airline_Crew (Crew_ID, Crew_First_Name, Crew_Last_Name, Crew_Gender, Crew_Country, Airline_ID)
+VALUES (8,'Jivitesh','Khurana','M','India',2);
+INSERT INTO Airline_Crew (Crew_ID, Crew_First_Name, Crew_Last_Name, Crew_Gender, Crew_Country, Airline_ID)
+VALUES (9,'Diya','Arora','F','India',2);
+INSERT INTO Airline_Crew (Crew_ID, Crew_First_Name, Crew_Last_Name, Crew_Gender, Crew_Country, Airline_ID)
+VALUES (10,'Kashvi','Thakur','F','India',2);
+
+INSERT INTO Airline_Crew_Phone_No (Crew_ID, Phone_No) VALUES (1,99876);
+INSERT INTO Airline_Crew_Phone_No (Crew_ID, Phone_No) VALUES (1,99879);
+INSERT INTO Airline_Crew_Phone_No (Crew_ID, Phone_No) VALUES (2,94356);
+INSERT INTO Airline_Crew_Phone_No (Crew_ID, Phone_No) VALUES (2,87641);
+INSERT INTO Airline_Crew_Phone_No (Crew_ID, Phone_No) VALUES (3,56560);
+INSERT INTO Airline_Crew_Phone_No (Crew_ID, Phone_No) VALUES (4,67823);
+INSERT INTO Airline_Crew_Phone_No (Crew_ID, Phone_No) VALUES (5,55643);
+
+INSERT INTO Runways (Runway_ID, Runway_No, Runway_Name, Airport_ID) VALUES (1,1,'Runway-1',1);
+INSERT INTO Runways (Runway_ID, Runway_No, Runway_Name, Airport_ID) VALUES (2,2,'Runway-2',1);
+INSERT INTO Runways (Runway_ID, Runway_No, Runway_Name, Airport_ID) VALUES (3,1,'Runway-1',2);
+INSERT INTO Runways (Runway_ID, Runway_No, Runway_Name, Airport_ID) VALUES (4,2,'Runway-2',2);
+INSERT INTO Runways (Runway_ID, Runway_No, Runway_Name, Airport_ID) VALUES (5,1,'Runway-1',3);
+INSERT INTO Runways (Runway_ID, Runway_No, Runway_Name, Airport_ID) VALUES (6,2,'Runway-2',3);
+INSERT INTO Runways (Runway_ID, Runway_No, Runway_Name, Airport_ID) VALUES (7,1,'Runway-1',4);
+INSERT INTO Runways (Runway_ID, Runway_No, Runway_Name, Airport_ID) VALUES (8,2,'Runway-2',4);
+INSERT INTO Runways (Runway_ID, Runway_No, Runway_Name, Airport_ID) VALUES (9,1,'Runway-1',5);
+INSERT INTO Runways (Runway_ID, Runway_No, Runway_Name, Airport_ID) VALUES (10,2,'Runway-2',5);
+
+INSERT INTO Terminals (Terminal_ID, Terminal_No, Terminal_Name, Airport_ID) VALUES (1,1,'Terminal-1',1);
+INSERT INTO Terminals (Terminal_ID, Terminal_No, Terminal_Name, Airport_ID) VALUES (2,2,'Terminal-2',1);
+INSERT INTO Terminals (Terminal_ID, Terminal_No, Terminal_Name, Airport_ID) VALUES (3,1,'Terminal-1',2);
+INSERT INTO Terminals (Terminal_ID, Terminal_No, Terminal_Name, Airport_ID) VALUES (4,2,'Terminal-2',2);
+INSERT INTO Terminals (Terminal_ID, Terminal_No, Terminal_Name, Airport_ID) VALUES (5,1,'Terminal-1',3);
+INSERT INTO Terminals (Terminal_ID, Terminal_No, Terminal_Name, Airport_ID) VALUES (6,2,'Terminal-2',3);
+INSERT INTO Terminals (Terminal_ID, Terminal_No, Terminal_Name, Airport_ID) VALUES (7,1,'Terminal-1',4);
+INSERT INTO Terminals (Terminal_ID, Terminal_No, Terminal_Name, Airport_ID) VALUES (8,2,'Terminal-2',4);
+INSERT INTO Terminals (Terminal_ID, Terminal_No, Terminal_Name, Airport_ID) VALUES (9,1,'Terminal-1',5);
+INSERT INTO Terminals (Terminal_ID, Terminal_No, Terminal_Name, Airport_ID) VALUES (10,2,'Terminal-2',5);
+
+INSERT INTO Scheduled_Flights (Flight_Scheduled_ID, Airline_Aeroplane_ID, Departure_Airport_ID, 
+Arrival_Airport_ID, Flight_Type, Departure_Date_Time, Arrival_Date_Time,  Destination_Distance, 
+Departure_Terminal_ID, Arrival_Terminal_ID,  Departure_Runway_ID, Arrival_Runway_ID) 
+VALUES (1,1,1,2,'Domestic','09-APR-2025 09:30:00 AM','09-APR-2025 11:30:00 AM',1000,1,1,2,2);
+
+INSERT INTO Scheduled_Flights (Flight_Scheduled_ID, Airline_Aeroplane_ID, Departure_Airport_ID, 
+Arrival_Airport_ID, Flight_Type, Departure_Date_Time, Arrival_Date_Time,  Destination_Distance, 
+Departure_Terminal_ID, Arrival_Terminal_ID,  Departure_Runway_ID, Arrival_Runway_ID) 
+VALUES (2,2,2,3,'Domestic','08-APR-2025 02:30:00 PM','08-APR-2025 05:30:00 PM',1000,1,2,1,2);
+
+INSERT INTO Scheduled_Flights (Flight_Scheduled_ID, Airline_Aeroplane_ID, Departure_Airport_ID, 
+Arrival_Airport_ID, Flight_Type, Departure_Date_Time, Arrival_Date_Time,  Destination_Distance, 
+Departure_Terminal_ID, Arrival_Terminal_ID,  Departure_Runway_ID, Arrival_Runway_ID) 
+VALUES (3,4,1,3,'Domestic','07-APR-2025 10:30:00 PM','08-APR-2025 12:30:00 AM',1000,1,1,2,2);
+
+INSERT INTO Scheduled_Flights (Flight_Scheduled_ID, Airline_Aeroplane_ID, Departure_Airport_ID, 
+Arrival_Airport_ID, Flight_Type, Departure_Date_Time, Arrival_Date_Time,  Destination_Distance, 
+Departure_Terminal_ID, Arrival_Terminal_ID,  Departure_Runway_ID, Arrival_Runway_ID) 
+VALUES (4,3,3,4,'International','11-APR-2025 09:30:00 AM','11-APR-2025 05:30:00 PM',1000,1,1,1,1);
+
+INSERT INTO Scheduled_Flights (Flight_Scheduled_ID, Airline_Aeroplane_ID, Departure_Airport_ID, 
+Arrival_Airport_ID, Flight_Type, Departure_Date_Time, Arrival_Date_Time,  Destination_Distance, 
+Departure_Terminal_ID, Arrival_Terminal_ID,  Departure_Runway_ID, Arrival_Runway_ID) 
+VALUES (5,5,1,5,'International','12-APR-2025 04:30:00 AM','09-APR-2025 02:30:00 PM',1000,1,1,2,2);
+
+INSERT INTO Flight_Crew (Flight_Crew_ID, Flight_ID, Pilot_ID, Copilot_ID, No_of_Air_Hostess, Head_Air_Hostess_ID)
+VALUES (1,1,1,3,2,5);
+INSERT INTO Flight_Crew (Flight_Crew_ID, Flight_ID, Pilot_ID, Copilot_ID, No_of_Air_Hostess, Head_Air_Hostess_ID)
+VALUES (2,2,2,3,4,6);
+INSERT INTO Flight_Crew (Flight_Crew_ID, Flight_ID, Pilot_ID, Copilot_ID, No_of_Air_Hostess, Head_Air_Hostess_ID)
+VALUES (3,3,4,1,3,7);
+INSERT INTO Flight_Crew (Flight_Crew_ID, Flight_ID, Pilot_ID, Copilot_ID, No_of_Air_Hostess, Head_Air_Hostess_ID)
+VALUES (4,4,2,4,4,8);
+INSERT INTO Flight_Crew (Flight_Crew_ID, Flight_ID, Pilot_ID, Copilot_ID, No_of_Air_Hostess, Head_Air_Hostess_ID)
+VALUES (5,5,1,2,2,5);
+
+INSERT INTO Flight_Crew_Hostess (Flight_Crew_ID, Airline_Crew_ID) VALUES (1,6);
+INSERT INTO Flight_Crew_Hostess (Flight_Crew_ID, Airline_Crew_ID) VALUES (2,7);
+INSERT INTO Flight_Crew_Hostess (Flight_Crew_ID, Airline_Crew_ID) VALUES (2,8);
+INSERT INTO Flight_Crew_Hostess (Flight_Crew_ID, Airline_Crew_ID) VALUES (2,9);
+INSERT INTO Flight_Crew_Hostess (Flight_Crew_ID, Airline_Crew_ID) VALUES (3,9);
+INSERT INTO Flight_Crew_Hostess (Flight_Crew_ID, Airline_Crew_ID) VALUES (3,10);
+
+
+INSERT INTO Passengers (Passenger_ID, Passenger_First_Name, Passenger_Last_Name, Passenger_Gender, Passenger_Age)
+VALUES (1, 'Harshit', 'Madaan', 'M',21);
+INSERT INTO Passengers (Passenger_ID, Passenger_First_Name, Passenger_Last_Name, Passenger_Gender, Passenger_Age)
+VALUES (2, 'Ujjwal', 'Dalal', 'M',26);
+INSERT INTO Passengers (Passenger_ID, Passenger_First_Name, Passenger_Last_Name, Passenger_Gender, Passenger_Age)
+VALUES (3, 'Palak', 'Kapadia', 'F',28);
+INSERT INTO Passengers (Passenger_ID, Passenger_First_Name, Passenger_Last_Name, Passenger_Gender, Passenger_Age)
+VALUES (4, 'Diksha', 'Singh', 'F',29);
+INSERT INTO Passengers (Passenger_ID, Passenger_First_Name, Passenger_Last_Name, Passenger_Gender, Passenger_Age)
+VALUES (5, 'Pranav', 'Deewaan', 'M',31);
+
+INSERT INTO Passenger_Phone_No (Passenger_ID, Phone_No) VALUES (1,55678);
+INSERT INTO Passenger_Phone_No (Passenger_ID, Phone_No) VALUES (1,87906);
+INSERT INTO Passenger_Phone_No (Passenger_ID, Phone_No) VALUES (2,45345);
+INSERT INTO Passenger_Phone_No (Passenger_ID, Phone_No) VALUES (2,12323);
+INSERT INTO Passenger_Phone_No (Passenger_ID, Phone_No) VALUES (3,19876);
+INSERT INTO Passenger_Phone_No (Passenger_ID, Phone_No) VALUES (4,87651);
+
+INSERT INTO Passengers_Traveling (Passenger_Traveling_ID, Passenger_ID, Flight_ID) 
+VALUES (1,1,1);
+INSERT INTO Passengers_Traveling (Passenger_Traveling_ID, Passenger_ID, Flight_ID) 
+VALUES (2,2,1);
+INSERT INTO Passengers_Traveling (Passenger_Traveling_ID, Passenger_ID, Flight_ID) 
+VALUES (3,1,4);
+INSERT INTO Passengers_Traveling (Passenger_Traveling_ID, Passenger_ID, Flight_ID) 
+VALUES (4,5,4);
+INSERT INTO Passengers_Traveling (Passenger_Traveling_ID, Passenger_ID, Flight_ID) 
+VALUES (5,3,1);
+
