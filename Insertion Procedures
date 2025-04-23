@@ -1,0 +1,205 @@
+CREATE OR REPLACE PROCEDURE Insert_Aeroplane (
+  p_Aeroplane_ID INT,
+  p_Aeroplane_Type VARCHAR2,
+  p_Aeroplane_Capacity_ID INT
+) IS
+BEGIN
+  INSERT INTO Aeroplanes (Aeroplane_ID, Aeroplane_Type, Aeroplane_Capacity_ID)
+  VALUES (p_Aeroplane_ID, p_Aeroplane_Type, p_Aeroplane_Capacity_ID);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Goods_Capacity (
+  p_Capacity_ID INT,
+  p_Total_Capacity INT
+) IS
+BEGIN
+  INSERT INTO Goods_Aeroplane_Capacity (Aeroplane_Capacity_ID, Total_Capacity)
+  VALUES (p_Capacity_ID, p_Total_Capacity);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Passenger_Capacity (
+  p_Capacity_ID INT,
+  p_Business INT DEFAULT 0,
+  p_Economy INT DEFAULT 0,
+  p_Premium_Economy INT DEFAULT 0,
+  p_First_Class INT DEFAULT 0
+) IS
+BEGIN
+  INSERT INTO Passenger_Aeroplane_Capacity (
+    Aeroplane_Capacity_ID, Business_Class_Seats, Economy_Class_Seats, 
+    Premium_Economy_Class_Seats, First_Class_Seats
+  ) VALUES (
+    p_Capacity_ID, p_Business, p_Economy, p_Premium_Economy, p_First_Class
+  );
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Airline_Crew (
+  p_Crew_ID INT,
+  p_First_Name VARCHAR2,
+  p_Last_Name VARCHAR2,
+  p_Gender CHAR,
+  p_Country VARCHAR2,
+  p_Airline_ID INT
+) IS
+BEGIN
+  INSERT INTO Airline_Crew (Crew_ID, Crew_First_Name, Crew_Last_Name, Crew_Gender, Crew_Country, Airline_ID)
+  VALUES (p_Crew_ID, p_First_Name, p_Last_Name, p_Gender, p_Country, p_Airline_ID);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Crew_Phone (
+  p_Crew_ID INT,
+  p_Phone_No INT
+) IS
+BEGIN
+  INSERT INTO Airline_Crew_Phone_No (Crew_ID, Phone_No)
+  VALUES (p_Crew_ID, p_Phone_No);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Airline (
+  p_Airline_ID INT,
+  p_Airline_Name VARCHAR2,
+  p_Total_Aeroplanes INT
+) IS
+BEGIN
+  INSERT INTO Airlines (Airline_ID, Airline_Name, Total_Aeroplanes)
+  VALUES (p_Airline_ID, p_Airline_Name, p_Total_Aeroplanes);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Airline_Aeroplane (
+  p_ID INT,
+  p_Airline_ID INT,
+  p_Aeroplane_ID INT
+) IS
+BEGIN
+  INSERT INTO Airline_Aeroplanes (Airline_Aeroplanes_ID, Airline_ID, Aeroplane_ID)
+  VALUES (p_ID, p_Airline_ID, p_Aeroplane_ID);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Airport (
+  p_ID INT,
+  p_Name VARCHAR2,
+  p_City VARCHAR2,
+  p_Country VARCHAR2,
+  p_Terminals INT,
+  p_Runways INT
+) IS
+BEGIN
+  INSERT INTO Airport (Airport_ID, Airport_Name, Airport_City, Airport_Country, Total_Terminals, Total_Runways)
+  VALUES (p_ID, p_Name, p_City, p_Country, p_Terminals, p_Runways);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Flight_Crew (
+  p_ID INT,
+  p_Flight_ID INT,
+  p_Pilot_ID INT,
+  p_Copilot_ID INT,
+  p_Num_Hostess INT,
+  p_Head_Hostess_ID INT
+) IS
+BEGIN
+  INSERT INTO Flight_Crew (Flight_Crew_ID, Flight_ID, Pilot_ID, Copilot_ID, No_of_Air_Hostess, Head_Air_Hostess_ID)
+  VALUES (p_ID, p_Flight_ID, p_Pilot_ID, p_Copilot_ID, p_Num_Hostess, p_Head_Hostess_ID);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Flight_Crew_Hostess (
+  p_Flight_Crew_ID INT,
+  p_Crew_ID INT
+) IS
+BEGIN
+  INSERT INTO Flight_Crew_Hostess (Flight_Crew_ID, Airline_Crew_ID)
+  VALUES (p_Flight_Crew_ID, p_Crew_ID);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Scheduled_Flight (
+  p_ID INT,
+  p_Airline_Aeroplane_ID INT,
+  p_Dep_Airport_ID INT,
+  p_Arr_Airport_ID INT,
+  p_Type VARCHAR2,
+  p_Arrival TIMESTAMP,
+  p_Departure TIMESTAMP,
+  p_Distance INT,
+  p_Arr_Terminal_ID INT,
+  p_Dep_Terminal_ID INT,
+  p_Arr_Runway_ID INT,
+  p_Dep_Runway_ID INT
+) IS
+BEGIN
+  INSERT INTO Scheduled_Flights (
+    Flight_Scheduled_ID, Airline_Aeroplane_ID, Departure_Airport_ID, Arrival_Airport_ID, Flight_Type,
+    Arrival_Date_Time, Departure_Date_Time, Destination_Distance,
+    Arrival_Terminal_ID, Departure_Terminal_ID, Arrival_Runway_ID, Departure_Runway_ID
+  ) VALUES (
+    p_ID, p_Airline_Aeroplane_ID, p_Dep_Airport_ID, p_Arr_Airport_ID, p_Type,
+    p_Arrival, p_Departure, p_Distance,
+    p_Arr_Terminal_ID, p_Dep_Terminal_ID, p_Arr_Runway_ID, p_Dep_Runway_ID
+  );
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Passenger (
+  p_ID INT,
+  p_First_Name VARCHAR2,
+  p_Last_Name VARCHAR2,
+  p_Gender CHAR,
+  p_Age INT
+) IS
+BEGIN
+  INSERT INTO Passengers (Passenger_ID, Passenger_First_Name, Passenger_Last_Name, Passenger_Gender, Passenger_Age)
+  VALUES (p_ID, p_First_Name, p_Last_Name, p_Gender, p_Age);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Passenger_Traveling (
+  p_Traveling_ID INT,
+  p_Passenger_ID INT,
+  p_Flight_ID INT
+) IS
+BEGIN
+  INSERT INTO Passengers_Traveling (Passenger_Traveling_ID, Passenger_ID, Flight_ID)
+  VALUES (p_Traveling_ID, p_Passenger_ID, p_Flight_ID);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Passenger_Phone (
+  p_Passenger_ID INT,
+  p_Phone_No INT
+) IS
+BEGIN
+  INSERT INTO Passenger_Phone_No (Passenger_ID, Phone_No)
+  VALUES (p_Passenger_ID, p_Phone_No);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Runway (
+  p_ID INT,
+  p_No INT,
+  p_Airport_ID INT,
+  p_Name VARCHAR2
+) IS
+BEGIN
+  INSERT INTO Runways (Runway_ID, Runway_No, Airport_ID, Runway_Name)
+  VALUES (p_ID, p_No, p_Airport_ID, p_Name);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Terminal (
+  p_ID INT,
+  p_No INT,
+  p_Name VARCHAR2,
+  p_Airport_ID INT
+) IS
+BEGIN
+  INSERT INTO Terminals (Terminal_ID, Terminal_No, Terminal_Name, Airport_ID)
+  VALUES (p_ID, p_No, p_Name, p_Airport_ID);
+END;
