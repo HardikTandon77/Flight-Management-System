@@ -1,0 +1,177 @@
+CREATE OR REPLACE PROCEDURE Print_Aeroplane_By_ID(p_Aeroplane_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Aeroplanes WHERE Aeroplane_ID = p_Aeroplane_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Aeroplane_ID: ' || rec.Aeroplane_ID ||
+                         ', Aeroplane_Type: ' || rec.Aeroplane_Type ||
+                         ', Aeroplane_Capacity_ID: ' || rec.Aeroplane_Capacity_ID);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Goods_Capacity_By_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Goods_Aeroplane_Capacity WHERE Aeroplane_Capacity_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Aeroplane_Capacity_ID: ' || rec.Aeroplane_Capacity_ID ||
+                         ', Total_Capacity: ' || rec.Total_Capacity);
+  END LOOP;
+END;
+/
+
+-- 3. Passenger_Aeroplane_Capacity
+CREATE OR REPLACE PROCEDURE Print_Passenger_Capacity_By_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Passenger_Aeroplane_Capacity WHERE Aeroplane_Capacity_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Aeroplane_Capacity_ID: ' || rec.Aeroplane_Capacity_ID ||
+                         ', Business_Class_Seats: ' || rec.Business_Class_Seats ||
+                         ', Economy_Class_Seats: ' || rec.Economy_Class_Seats ||
+                         ', Premium_Economy_Class_Seats: ' || rec.Premium_Economy_Class_Seats ||
+                         ', First_Class_Seats: ' || rec.First_Class_Seats);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Airline_Crew_By_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Airline_Crew WHERE Crew_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Crew_ID: ' || rec.Crew_ID ||
+                         ', Crew_First_Name: ' || rec.Crew_First_Name ||
+                         ', Crew_Last_Name: ' || rec.Crew_Last_Name ||
+                         ', Crew_Gender: ' || rec.Crew_Gender ||
+                         ', Crew_Country: ' || rec.Crew_Country ||
+                         ', Airline_ID: ' || rec.Airline_ID);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Crew_Phone_By_Crew_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Airline_Crew_Phone_No WHERE Crew_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Crew_ID: ' || rec.Crew_ID || ', Phone_No: ' || rec.Phone_No);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Airline_By_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Airlines WHERE Airline_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Airline_ID: ' || rec.Airline_ID ||
+                         ', Airline_Name: ' || rec.Airline_Name ||
+                         ', Total_Aeroplanes: ' || rec.Total_Aeroplanes);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Airline_Aeroplane_By_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Airline_Aeroplanes WHERE Airline_Aeroplanes_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Airline_Aeroplanes_ID: ' || rec.Airline_Aeroplanes_ID ||
+                         ', Airline_ID: ' || rec.Airline_ID ||
+                         ', Aeroplane_ID: ' || rec.Aeroplane_ID);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Airport_By_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Airport WHERE Airport_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Airport_ID: ' || rec.Airport_ID ||
+                         ', Airport_Name: ' || rec.Airport_Name ||
+                         ', Airport_City: ' || rec.Airport_City ||
+                         ', Airport_Country: ' || rec.Airport_Country ||
+                         ', Total_Terminals: ' || rec.Total_Terminals ||
+                         ', Total_Runways: ' || rec.Total_Runways);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Flight_Crew_By_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Flight_Crew WHERE Flight_Crew_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Flight_Crew_ID: ' || rec.Flight_Crew_ID ||
+                         ', Flight_ID: ' || rec.Flight_ID ||
+                         ', Pilot_ID: ' || rec.Pilot_ID ||
+                         ', Copilot_ID: ' || rec.Copilot_ID ||
+                         ', No_of_Air_Hostess: ' || rec.No_of_Air_Hostess ||
+                         ', Head_Air_Hostess_ID: ' || rec.Head_Air_Hostess_ID);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Flight_Crew_Hostess_By_FC_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Flight_Crew_Hostess WHERE Flight_Crew_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Flight_Crew_ID: ' || rec.Flight_Crew_ID ||
+                         ', Airline_Crew_ID: ' || rec.Airline_Crew_ID);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Scheduled_Flight_By_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Scheduled_Flights WHERE Flight_Scheduled_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Flight_Scheduled_ID: ' || rec.Flight_Scheduled_ID ||
+                         ', Airline_Aeroplane_ID: ' || rec.Airline_Aeroplane_ID ||
+                         ', Departure_Airport_ID: ' || rec.Departure_Airport_ID ||
+                         ', Arrival_Airport_ID: ' || rec.Arrival_Airport_ID ||
+                         ', Flight_Type: ' || rec.Flight_Type ||
+                         ', Arrival_Date_Time: ' || rec.Arrival_Date_Time ||
+                         ', Departure_Date_Time: ' || rec.Departure_Date_Time ||
+                         ', Destination_Distance: ' || rec.Destination_Distance ||
+                         ', Arrival_Terminal_ID: ' || rec.Arrival_Terminal_ID ||
+                         ', Departure_Terminal_ID: ' || rec.Departure_Terminal_ID ||
+                         ', Arrival_Runway_ID: ' || rec.Arrival_Runway_ID ||
+                         ', Departure_Runway_ID: ' || rec.Departure_Runway_ID);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Passenger_By_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Passengers WHERE Passenger_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Passenger_ID: ' || rec.Passenger_ID ||
+                         ', Passenger_First_Name: ' || rec.Passenger_First_Name ||
+                         ', Passenger_Last_Name: ' || rec.Passenger_Last_Name ||
+                         ', Passenger_Gender: ' || rec.Passenger_Gender ||
+                         ', Passenger_Age: ' || rec.Passenger_Age);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Passenger_Traveling_By_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Passengers_Traveling WHERE Passenger_Traveling_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Passenger_Traveling_ID: ' || rec.Passenger_Traveling_ID ||
+                         ', Passenger_ID: ' || rec.Passenger_ID ||
+                         ', Flight_ID: ' || rec.Flight_ID);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Passenger_Phone_By_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Passenger_Phone_No WHERE Passenger_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Passenger_ID: ' || rec.Passenger_ID || ', Phone_No: ' || rec.Phone_No);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Runway_By_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Runways WHERE Runway_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Runway_ID: ' || rec.Runway_ID ||
+                         ', Runway_No: ' || rec.Runway_No ||
+                         ', Runway_Name: ' || rec.Runway_Name ||
+                         ', Airport_ID: ' || rec.Airport_ID);
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Terminal_By_ID(p_ID INT) IS
+BEGIN
+  FOR rec IN (SELECT * FROM Terminals WHERE Terminal_ID = p_ID) LOOP
+    DBMS_OUTPUT.PUT_LINE('Terminal_ID: ' || rec.Terminal_ID ||
+                         ', Terminal_No: ' || rec.Terminal_No ||
+                         ', Terminal_Name: ' || rec.Terminal_Name ||
+                         ', Airport_ID: ' || rec.Airport_ID);
+  END LOOP;
+END;
