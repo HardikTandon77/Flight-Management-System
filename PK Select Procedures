@@ -15,9 +15,8 @@ BEGIN
                          ', Total_Capacity: ' || rec.Total_Capacity);
   END LOOP;
 END;
-/
 
--- 3. Passenger_Aeroplane_Capacity
+
 CREATE OR REPLACE PROCEDURE Print_Passenger_Capacity_By_ID(p_ID INT) IS
 BEGIN
   FOR rec IN (SELECT * FROM Passenger_Aeroplane_Capacity WHERE Aeroplane_Capacity_ID = p_ID) LOOP
