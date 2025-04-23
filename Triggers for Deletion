@@ -1,0 +1,124 @@
+CREATE OR REPLACE TRIGGER trg_delete_aeroplanes
+AFTER DELETE ON Aeroplanes
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Aeroplanes: Aeroplane_ID = ' || :OLD.Aeroplane_ID);
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_delete_goods_capacity
+AFTER DELETE ON Goods_Aeroplane_Capacity
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Goods_Aeroplane_Capacity: Aeroplane_Capacity_ID = ' || :OLD.Aeroplane_Capacity_ID);
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_delete_passenger_capacity
+AFTER DELETE ON Passenger_Aeroplane_Capacity
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Passenger_Aeroplane_Capacity: Aeroplane_Capacity_ID = ' || :OLD.Aeroplane_Capacity_ID);
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_delete_airline_crew
+AFTER DELETE ON Airline_Crew
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Airline_Crew: Crew_ID = ' || :OLD.Crew_ID);
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_delete_crew_phone
+AFTER DELETE ON Airline_Crew_Phone_No
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Airline_Crew_Phone_No: Crew_ID = ' || :OLD.Crew_ID);
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_delete_airlines
+AFTER DELETE ON Airlines
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Airlines: Airline_ID = ' || :OLD.Airline_ID);
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_delete_airline_aeroplanes
+AFTER DELETE ON Airline_Aeroplanes
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Airline_Aeroplanes: Airline_Aeroplanes_ID = ' || :OLD.Airline_Aeroplanes_ID);
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_delete_airport
+AFTER DELETE ON Airport
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Airport: Airport_ID = ' || :OLD.Airport_ID);
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_delete_flight_crew
+AFTER DELETE ON Flight_Crew
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Flight_Crew: Flight_Crew_ID = ' || :OLD.Flight_Crew_ID);
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_delete_flight_crew_hostess
+AFTER DELETE ON Flight_Crew_Hostess
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Flight_Crew_Hostess: Flight_Crew_ID = ' || :OLD.Flight_Crew_ID);
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_delete_scheduled_flights
+AFTER DELETE ON Scheduled_Flights
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Scheduled_Flights: Flight_Scheduled_ID = ' || :OLD.Flight_Scheduled_ID);
+END;
+
+CREATE OR REPLACE TRIGGER trg_delete_passengers
+AFTER DELETE ON Passengers
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Passengers: Passenger_ID = ' || :OLD.Passenger_ID);
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_delete_passengers_traveling
+AFTER DELETE ON Passengers_Traveling
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Passengers_Traveling: Passenger_Traveling_ID = ' || :OLD.Passenger_Traveling_ID);
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_delete_passenger_phone
+AFTER DELETE ON Passenger_Phone_No
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Passenger_Phone_No: Passenger_ID = ' || :OLD.Passenger_ID);
+END;
+
+CREATE OR REPLACE TRIGGER trg_delete_runways
+AFTER DELETE ON Runways
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Runways: Runway_ID = ' || :OLD.Runway_ID);
+END;
+
+CREATE OR REPLACE TRIGGER trg_delete_terminals
+AFTER DELETE ON Terminals
+FOR EACH ROW
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Deleted from Terminals: Terminal_ID = ' || :OLD.Terminal_ID);
+END;
+/
