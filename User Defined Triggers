@@ -1,0 +1,165 @@
+CREATE OR REPLACE TRIGGER trg_Check_Flight_Type_Smart
+BEFORE INSERT OR UPDATE OF Flight_Type, Departure_Airport_ID, Arrival_Airport_ID ON Scheduled_Flights
+FOR EACH ROW
+DECLARE
+    invalid_flight_type EXCEPTION;
+BEGIN
+    IF :NEW.Departure_Airport_ID = :NEW.Arrival_Airport_ID THEN
+        -- Same airport => must be Domestic
+        IF :NEW.Flight_Type != 'Domestic' THEN
+            RAISE invalid_flight_type;
+        END IF;
+    ELSE
+        -- Different airports => must be International
+        IF :NEW.Flight_Type != 'International' THEN
+            RAISE invalid_flight_type;
+        END IF;
+    END IF;
+EXCEPTION
+    WHEN invalid_flight_type THEN
+        RAISE_APPLICATION_ERROR(-20004, 'ERROR: Flight Type must match Airport IDs! (Domestic/International)');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_Check_Terminals_Runways
+BEFORE INSERT OR UPDATE OF Total_Terminals, Total_Runways ON Airport
+FOR EACH ROW
+DECLARE
+    invalid_terminal_runway EXCEPTION;
+BEGIN
+    IF :NEW.Total_Terminals = 0 OR :NEW.Total_Runways = 0 THEN
+        RAISE invalid_terminal_runway;
+    END IF;
+EXCEPTION
+    WHEN invalid_terminal_runway THEN
+        RAISE_APPLICATION_ERROR(-20005, 'ERROR: Total Terminals and Total Runways must be greater than 0!');
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_Check_Destination_Distance
+BEFORE INSERT OR UPDATE OF Destination_Distance ON Scheduled_Flights
+FOR EACH ROW
+DECLARE
+    invalid_distance EXCEPTION;
+BEGIN
+    IF :NEW.Destination_Distance = 0 THEN
+        RAISE invalid_distance;
+    END IF;
+EXCEPTION
+    WHEN invalid_distance THEN
+        RAISE_APPLICATION_ERROR(-20006, 'ERROR: Destination Distance must be greater than 0!');
+END;
+
+CREATE OR REPLACE TRIGGER trg_Check_Hostess_Insert
+BEFORE INSERT OR UPDATE ON Flight_Crew_Hostess
+FOR EACH ROW
+DECLARE
+    hostess_count_after_insert NUMBER;
+    max_hostess_allowed NUMBER;
+BEGIN
+    -- 1. Count how many hostesses will be there after this INSERT
+    SELECT COUNT(*)
+    INTO hostess_count_after_insert
+    FROM Flight_Crew_Hostess
+    WHERE Flight_Crew_ID = :NEW.Flight_Crew_ID;
+
+    -- Adding +1 because this row itself is not committed yet
+    hostess_count_after_insert := hostess_count_after_insert + 1;
+
+    -- 2. Get maximum allowed hostesses (No_of_Air_Hostess from Flight_Crew table)
+    SELECT No_of_Air_Hostess
+    INTO max_hostess_allowed
+    FROM Flight_Crew
+    WHERE Flight_Crew_ID = :NEW.Flight_Crew_ID;
+
+    -- 3. Now compare
+    IF hostess_count_after_insert > max_hostess_allowed THEN
+        RAISE_APPLICATION_ERROR(-20011, 'ERROR: Hostess count exceeds allowed No_of_Air_Hostess for this flight.');
+    END IF;
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_Check_Passenger_Phone_Digits
+BEFORE INSERT OR UPDATE ON Passenger_Phone_No
+FOR EACH ROW
+DECLARE
+    v_digit_count NUMBER;
+BEGIN
+    -- Count digits in the new Phone Number
+    v_digit_count := LENGTH(TRIM(TO_CHAR(:NEW.Phone_No)));
+
+    -- Check if digits are exactly 5
+    IF v_digit_count != 5 THEN
+        RAISE_APPLICATION_ERROR(-20012, 'ERROR: Phone number must have exactly 5 digits.');
+    END IF;
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_Check_Crew_Phone_Digits
+BEFORE INSERT OR UPDATE ON Airline_Crew_Phone_No
+FOR EACH ROW
+DECLARE
+    v_digit_count NUMBER;
+BEGIN
+    -- Count digits in the new Phone Number
+    v_digit_count := LENGTH(TRIM(TO_CHAR(:NEW.Phone_No)));
+
+    -- Check if digits are exactly 5
+    IF v_digit_count != 5 THEN
+        RAISE_APPLICATION_ERROR(-20013, 'ERROR: Crew Phone number must have exactly 5 digits.');
+    END IF;
+END;
+
+CREATE OR REPLACE TRIGGER trg_Check_PassengerPlane_Capacity
+BEFORE INSERT OR UPDATE ON Passenger_Aeroplane_Capacity
+FOR EACH ROW
+DECLARE
+    v_total_capacity NUMBER;
+BEGIN
+    -- Calculate total seats
+    v_total_capacity := NVL(:NEW.Business_Class_Seats, 0)
+                      + NVL(:NEW.Economy_Class_Seats, 0)
+                      + NVL(:NEW.Premium_Economy_Class_Seats, 0)
+                      + NVL(:NEW.First_Class_Seats, 0);
+
+    -- Check if total capacity is > 0
+    IF v_total_capacity <= 0 THEN
+        RAISE_APPLICATION_ERROR(-20014, 'ERROR: Total Passenger Plane capacity must be greater than 0.');
+    END IF;
+END;
+
+
+CREATE OR REPLACE TRIGGER trg_check_aeroplane_capacity
+BEFORE INSERT OR UPDATE
+ON Aeroplanes
+FOR EACH ROW
+DECLARE
+    v_dummy NUMBER;
+BEGIN
+    IF :NEW.Aeroplane_Type = 'goods' THEN
+        -- Check if Aeroplane_Capacity_ID exists in Goods_Aeroplane_Capacity
+        SELECT 1 INTO v_dummy
+        FROM Goods_Aeroplane_Capacity
+        WHERE Aeroplane_Capacity_ID = :NEW.Aeroplane_Capacity_ID;
+        
+    ELSIF :NEW.Aeroplane_Type = 'passenger' THEN
+        -- Check if Aeroplane_Capacity_ID exists in Passenger_Aeroplane_Capacity
+        SELECT 1 INTO v_dummy
+        FROM Passenger_Aeroplane_Capacity
+        WHERE Aeroplane_Capacity_ID = :NEW.Aeroplane_Capacity_ID;
+        
+    ELSE
+        RAISE_APPLICATION_ERROR(-20010, 'Invalid Aeroplane Type: must be goods or passenger');
+    END IF;
+    
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        IF :NEW.Aeroplane_Type = 'goods' THEN
+            RAISE_APPLICATION_ERROR(-20011, 'Aeroplane_Capacity_ID not found in Goods_Aeroplane_Capacity');
+        ELSIF :NEW.Aeroplane_Type = 'passenger' THEN
+            RAISE_APPLICATION_ERROR(-20012, 'Aeroplane_Capacity_ID not found in Passenger_Aeroplane_Capacity');
+        END IF;
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20013, 'Unexpected error occurred in capacity trigger');
+END;
+
