@@ -1,0 +1,115 @@
+CREATE OR REPLACE PROCEDURE Insert_Passenger_With_Phones(
+    p_Passenger_ID         IN Passengers.Passenger_ID%TYPE,
+    p_First_Name           IN Passengers.Passenger_First_Name%TYPE,
+    p_Last_Name            IN Passengers.Passenger_Last_Name%TYPE,
+    p_Gender               IN Passengers.Passenger_Gender%TYPE,
+    p_Age                  IN Passengers.Passenger_Age%TYPE,
+    p_Phone_Nos            IN VARCHAR2 -- comma-separated string
+)
+IS
+    v_phone  VARCHAR2(100);
+    v_start  NUMBER := 1;
+    v_end    NUMBER;
+BEGIN
+    -- Insert passenger details
+    INSERT INTO Passengers (
+        Passenger_ID,
+        Passenger_First_Name,
+        Passenger_Last_Name,
+        Passenger_Gender,
+        Passenger_Age
+    ) VALUES (
+        p_Passenger_ID,
+        p_First_Name,
+        p_Last_Name,
+        p_Gender,
+        p_Age
+    );
+    
+    -- Insert each phone number one by one
+    LOOP
+        v_end := INSTR(p_Phone_Nos, ',', v_start);
+        
+        IF v_end = 0 THEN
+            v_phone := SUBSTR(p_Phone_Nos, v_start);
+            INSERT INTO Passenger_Phone_No (Passenger_ID, Phone_No)
+            VALUES (p_Passenger_ID, TO_NUMBER(TRIM(v_phone)));
+            EXIT;
+        ELSE
+            v_phone := SUBSTR(p_Phone_Nos, v_start, v_end - v_start);
+            INSERT INTO Passenger_Phone_No (Passenger_ID, Phone_No)
+            VALUES (p_Passenger_ID, TO_NUMBER(TRIM(v_phone)));
+            v_start := v_end + 1;
+        END IF;
+    END LOOP;
+    
+    COMMIT;
+    
+    DBMS_OUTPUT.PUT_LINE('Passenger and phone numbers inserted successfully.');
+    
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('Passenger ID or Phone number already exists.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Some error occurred: ' || SQLERRM);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Insert_Crew_With_Phones(
+    p_Crew_ID       IN Airline_Crew.Crew_ID%TYPE,
+    p_First_Name    IN Airline_Crew.Crew_First_Name%TYPE,
+    p_Last_Name     IN Airline_Crew.Crew_Last_Name%TYPE,
+    p_Gender        IN Airline_Crew.Crew_Gender%TYPE,
+    p_Age           IN Airline_Crew.Crew_Age%TYPE,
+    p_Designation   IN Airline_Crew.Crew_Designation%TYPE,
+    p_Phone_Nos     IN VARCHAR2 -- comma-separated string of phones
+)
+IS
+    v_phone  VARCHAR2(100);
+    v_start  NUMBER := 1;
+    v_end    NUMBER;
+BEGIN
+    -- Insert crew details first
+    INSERT INTO Airline_Crew (
+        Crew_ID,
+        Crew_First_Name,
+        Crew_Last_Name,
+        Crew_Gender,
+        Crew_Age,
+        Crew_Designation
+    ) VALUES (
+        p_Crew_ID,
+        p_First_Name,
+        p_Last_Name,
+        p_Gender,
+        p_Age,
+        p_Designation
+    );
+    
+    -- Insert each phone number one by one
+    LOOP
+        v_end := INSTR(p_Phone_Nos, ',', v_start);
+        
+        IF v_end = 0 THEN
+            v_phone := SUBSTR(p_Phone_Nos, v_start);
+            INSERT INTO Crew_Phone_No (Crew_ID, Phone_No)
+            VALUES (p_Crew_ID, TO_NUMBER(TRIM(v_phone)));
+            EXIT;
+        ELSE
+            v_phone := SUBSTR(p_Phone_Nos, v_start, v_end - v_start);
+            INSERT INTO Crew_Phone_No (Crew_ID, Phone_No)
+            VALUES (p_Crew_ID, TO_NUMBER(TRIM(v_phone)));
+            v_start := v_end + 1;
+        END IF;
+    END LOOP;
+    
+    COMMIT;
+    
+    DBMS_OUTPUT.PUT_LINE('Crew and phone numbers inserted successfully.');
+    
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('Crew ID or Phone number already exists.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Some error occurred: ' || SQLERRM);
+END;
