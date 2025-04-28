@@ -1,0 +1,961 @@
+CREATE OR REPLACE PROCEDURE Print_Passenger_Details AS
+  -- Cursor for passengers
+  CURSOR passenger_cur IS
+    SELECT Passenger_ID, Passenger_First_Name, Passenger_Last_Name, Passenger_Gender, Passenger_Age
+    FROM Passengers
+    ORDER BY Passenger_ID;
+  
+  -- Cursor for phone numbers (parameterized)
+  CURSOR phone_cur(p_passenger_id INT) IS
+    SELECT Phone_No
+    FROM Passenger_Phone_No
+    WHERE Passenger_ID = p_passenger_id
+    ORDER BY Phone_No;
+    
+  v_phone Passenger_Phone_No.Phone_No%TYPE;
+BEGIN
+  -- Loop through passengers
+  FOR p_rec IN passenger_cur LOOP
+    -- Print passenger details once
+    DBMS_OUTPUT.PUT_LINE('Passenger ID    : ' || p_rec.Passenger_ID);
+    DBMS_OUTPUT.PUT_LINE('Name            : ' || p_rec.Passenger_First_Name || ' ' || NVL(p_rec.Passenger_Last_Name, ''));
+    DBMS_OUTPUT.PUT_LINE('Gender          : ' || p_rec.Passenger_Gender);
+    DBMS_OUTPUT.PUT_LINE('Age             : ' || p_rec.Passenger_Age);
+    DBMS_OUTPUT.PUT('Phone Numbers   : ');
+    
+    BEGIN
+      -- Open phone cursor for this passenger
+      OPEN phone_cur(p_rec.Passenger_ID);
+      FETCH phone_cur INTO v_phone;
+      
+      -- If at least one phone number found
+      DBMS_OUTPUT.PUT(v_phone);
+      
+      LOOP
+        FETCH phone_cur INTO v_phone;
+        EXIT WHEN phone_cur%NOTFOUND;
+        DBMS_OUTPUT.PUT(', ' || v_phone);
+      END LOOP;
+      
+      CLOSE phone_cur;
+      
+    EXCEPTION
+      WHEN NO_DATA_FOUND THEN
+        -- If no phone numbers found
+        DBMS_OUTPUT.PUT('N/A');
+        CLOSE phone_cur;
+    END;
+    
+    -- Finish line after phone numbers
+    DBMS_OUTPUT.NEW_LINE;
+    DBMS_OUTPUT.PUT_LINE('--------------------------------------------------');
+  END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Passenger_Details_pk(p_passenger_id IN INT)
+AS
+    -- Cursor to fetch passenger details
+    CURSOR passenger_cur IS
+        SELECT Passenger_ID, Passenger_First_Name, Passenger_Last_Name, Passenger_Gender, Passenger_Age
+        FROM Passengers
+        WHERE Passenger_ID = p_passenger_id;
+
+    -- Cursor to fetch phone numbers
+    CURSOR phone_cur IS
+        SELECT Phone_No
+        FROM Passenger_Phone_No
+        WHERE Passenger_ID = p_passenger_id;
+
+    -- Variables to hold data
+    v_passenger_rec passenger_cur%ROWTYPE;
+    v_phone Passenger_Phone_No.Phone_No%TYPE;
+
+    -- Exception to handle no phone numbers
+    no_phone_numbers EXCEPTION;
+    phone_count INT := 0;
+BEGIN
+    -- Fetch passenger
+    OPEN passenger_cur;
+    FETCH passenger_cur INTO v_passenger_rec;
+    
+    IF passenger_cur%NOTFOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No passenger found with Passenger_ID = ' || p_passenger_id);
+        CLOSE passenger_cur;
+        RETURN;
+    END IF;
+
+    DBMS_OUTPUT.PUT_LINE('Passenger ID    : ' || v_passenger_rec.Passenger_ID);
+    DBMS_OUTPUT.PUT_LINE('Name            : ' || v_passenger_rec.Passenger_First_Name || ' ' || NVL(v_passenger_rec.Passenger_Last_Name,''));
+    DBMS_OUTPUT.PUT_LINE('Gender          : ' || v_passenger_rec.Passenger_Gender);
+    DBMS_OUTPUT.PUT_LINE('Age             : ' || v_passenger_rec.Passenger_Age);
+    DBMS_OUTPUT.PUT('Phone Numbers   : ');
+    
+    CLOSE passenger_cur;
+    
+    -- Fetch phones
+    OPEN phone_cur;
+    LOOP
+        FETCH phone_cur INTO v_phone;
+        EXIT WHEN phone_cur%NOTFOUND;
+        IF phone_count > 0 THEN
+            DBMS_OUTPUT.PUT(', '); -- for multiple numbers
+        END IF;
+        DBMS_OUTPUT.PUT(v_phone);
+        phone_count := phone_count + 1;
+    END LOOP;
+
+    IF phone_count = 0 THEN
+        RAISE no_phone_numbers;
+    END IF;
+
+    CLOSE phone_cur;
+    DBMS_OUTPUT.NEW_LINE;
+    DBMS_OUTPUT.PUT_LINE('--------------------------------------------------');
+
+EXCEPTION
+    WHEN no_phone_numbers THEN
+        DBMS_OUTPUT.PUT('N/A');
+        CLOSE phone_cur; -- OK to close cursor if manually opened
+        DBMS_OUTPUT.NEW_LINE;
+        DBMS_OUTPUT.PUT_LINE('--------------------------------------------------');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Some unexpected error occurred: ' || SQLERRM);
+        -- Don't close phone_cur here forcibly
+END;
+
+CREATE OR REPLACE PROCEDURE Print_All_Passengers_For_Flight(p_flight_id IN INT)
+AS
+    -- Cursor to fetch all passengers for the given flight
+    CURSOR passenger_flight_cur IS
+        SELECT Passenger_ID
+        FROM Passengers_Traveling
+        WHERE Flight_ID = p_flight_id;
+
+    v_passenger_id Passengers_Traveling.Passenger_ID%TYPE;
+BEGIN
+    OPEN passenger_flight_cur;
+    LOOP
+        FETCH passenger_flight_cur INTO v_passenger_id;
+        EXIT WHEN passenger_flight_cur%NOTFOUND;
+
+        -- Call the existing procedure for each passenger
+        Print_Passenger_Details_pk(v_passenger_id);
+
+    END LOOP;
+    CLOSE passenger_flight_cur;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Some unexpected error occurred: ' || SQLERRM);
+END;
+
+CREATE OR REPLACE PROCEDURE Print_Crew_Details
+AS
+    -- Cursor for all crew
+    CURSOR crew_cur IS
+        SELECT *
+        FROM Airline_Crew;
+
+    -- Cursor for phone numbers for each crew
+    CURSOR phone_cur(p_crew_id INT) IS
+        SELECT Phone_No
+        FROM Airline_Crew_Phone_No
+        WHERE Crew_ID = p_crew_id;
+
+    -- Variables
+    v_crew Airline_Crew%ROWTYPE;
+    v_phone Airline_Crew_Phone_No.Phone_No%TYPE;
+    phone_count INT;
+BEGIN
+    FOR v_crew IN crew_cur LOOP
+        -- Print basic crew details
+        DBMS_OUTPUT.PUT_LINE('Crew ID         : ' || v_crew.Crew_ID);
+        DBMS_OUTPUT.PUT_LINE('Name            : ' || v_crew.Crew_First_Name || ' ' || NVL(v_crew.Crew_Last_Name, ''));
+        DBMS_OUTPUT.PUT_LINE('Gender          : ' || v_crew.Crew_Gender);
+        DBMS_OUTPUT.PUT_LINE('Country         : ' || v_crew.Crew_Country);
+        DBMS_OUTPUT.PUT_LINE('Airline ID      : ' || v_crew.Airline_ID);
+
+        -- Now print phone numbers
+        DBMS_OUTPUT.PUT('Phone Numbers   : ');
+
+        phone_count := 0;
+
+        BEGIN
+            FOR v_phone IN phone_cur(v_crew.Crew_ID) LOOP
+                IF phone_count > 0 THEN
+                    DBMS_OUTPUT.PUT(', ');
+                END IF;
+                DBMS_OUTPUT.PUT(v_phone.Phone_No);
+                phone_count := phone_count + 1;
+            END LOOP;
+
+            IF phone_count = 0 THEN
+                RAISE_APPLICATION_ERROR(-20001, 'No phone numbers found');
+            END IF;
+
+            DBMS_OUTPUT.NEW_LINE;
+
+        EXCEPTION
+            WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT('N/A');
+                DBMS_OUTPUT.NEW_LINE;
+        END;
+
+        DBMS_OUTPUT.PUT_LINE('--------------------------------------------------');
+
+    END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Crew_Details_pk(p_crew_id IN INT)
+AS
+    -- Cursor to fetch crew details
+    CURSOR crew_cur IS
+        SELECT Crew_ID, Crew_First_Name, Crew_Last_Name, Crew_Gender, Crew_Country
+        FROM Airline_Crew
+        WHERE Crew_ID = p_crew_id;
+
+    -- Cursor to fetch crew phone numbers
+    CURSOR phone_cur IS
+        SELECT Phone_No
+        FROM Airline_Crew_Phone_No
+        WHERE Crew_ID = p_crew_id;
+
+    -- Variables
+    v_crew_rec crew_cur%ROWTYPE;
+    v_phone Airline_Crew_Phone_No.Phone_No%TYPE;
+    no_phone_numbers EXCEPTION;
+    phone_count INT := 0;
+BEGIN
+    -- Fetch crew member
+    OPEN crew_cur;
+    FETCH crew_cur INTO v_crew_rec;
+    
+    IF crew_cur%NOTFOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No crew member found with Crew_ID = ' || p_crew_id);
+        CLOSE crew_cur;
+        RETURN;
+    END IF;
+
+    DBMS_OUTPUT.PUT_LINE('Crew ID         : ' || v_crew_rec.Crew_ID);
+    DBMS_OUTPUT.PUT_LINE('Name            : ' || v_crew_rec.Crew_First_Name || ' ' || NVL(v_crew_rec.Crew_Last_Name,''));
+    DBMS_OUTPUT.PUT_LINE('Gender          : ' || v_crew_rec.Crew_Gender);
+    DBMS_OUTPUT.PUT_LINE('Country         : ' || v_crew_rec.Crew_Country);
+    DBMS_OUTPUT.PUT('Phone Numbers   : ');
+    
+    CLOSE crew_cur;
+
+    -- Fetch phone numbers
+    OPEN phone_cur;
+    LOOP
+        FETCH phone_cur INTO v_phone;
+        EXIT WHEN phone_cur%NOTFOUND;
+        IF phone_count > 0 THEN
+            DBMS_OUTPUT.PUT(', ');
+        END IF;
+        DBMS_OUTPUT.PUT(v_phone);
+        phone_count := phone_count + 1;
+    END LOOP;
+
+    IF phone_count = 0 THEN
+        RAISE no_phone_numbers;
+    END IF;
+
+    CLOSE phone_cur;
+    DBMS_OUTPUT.NEW_LINE;
+    DBMS_OUTPUT.PUT_LINE('--------------------------------------------------');
+
+EXCEPTION
+    WHEN no_phone_numbers THEN
+        DBMS_OUTPUT.PUT('N/A');
+        CLOSE phone_cur;
+        DBMS_OUTPUT.NEW_LINE;
+        DBMS_OUTPUT.PUT_LINE('--------------------------------------------------');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Some unexpected error occurred: ' || SQLERRM);
+END;
+
+CREATE OR REPLACE PROCEDURE Print_Crew_For_Flight(p_flight_id IN INT)
+AS
+    -- Variables to hold main Flight Crew data
+    v_flight_crew_id Flight_Crew.Flight_Crew_ID%TYPE;
+    v_pilot_id Flight_Crew.Pilot_ID%TYPE;
+    v_copilot_id Flight_Crew.Copilot_ID%TYPE;
+    v_head_hostess_id Flight_Crew.Head_Air_Hostess_ID%TYPE;
+
+    -- Cursor for air hostesses
+    CURSOR hostess_cur IS
+        SELECT Airline_Crew_ID
+        FROM Flight_Crew_Hostess
+        WHERE Flight_Crew_ID = v_flight_crew_id;
+
+    -- Cursor to fetch phone numbers of given crew
+    CURSOR phone_cur(p_crew_id INT) IS
+        SELECT Phone_No
+        FROM Airline_Crew_Phone_No
+        WHERE Crew_ID = p_crew_id;
+
+    -- Variables
+    v_hostess_id Flight_Crew_Hostess.Airline_Crew_ID%TYPE;
+    v_crew_rec Airline_Crew%ROWTYPE;
+    v_phone Airline_Crew_Phone_No.Phone_No%TYPE;
+    phone_count INT;
+    no_phone_numbers EXCEPTION;
+BEGIN
+    -- Step 1: Find the flight crew IDs
+    SELECT Flight_Crew_ID, Pilot_ID, Copilot_ID, Head_Air_Hostess_ID
+    INTO v_flight_crew_id, v_pilot_id, v_copilot_id, v_head_hostess_id
+    FROM Flight_Crew
+    WHERE Flight_ID = p_flight_id;
+
+    -- Helper to print one crew member
+    -- No separate procedure, done internally
+    DECLARE
+        PROCEDURE Print_Crew_Details_pk(p_crew_id INT)
+        AS
+        BEGIN
+            -- Fetch crew details
+            SELECT *
+            INTO v_crew_rec
+            FROM Airline_Crew
+            WHERE Crew_ID = p_crew_id;
+
+            -- Print crew info
+            DBMS_OUTPUT.PUT_LINE('Crew ID         : ' || v_crew_rec.Crew_ID);
+            DBMS_OUTPUT.PUT_LINE('Name            : ' || v_crew_rec.Crew_First_Name || ' ' || NVL(v_crew_rec.Crew_Last_Name,''));
+            DBMS_OUTPUT.PUT_LINE('Gender          : ' || v_crew_rec.Crew_Gender);
+            DBMS_OUTPUT.PUT_LINE('Country         : ' || v_crew_rec.Crew_Country);
+
+            -- Print phone numbers
+            DBMS_OUTPUT.PUT('Phone Numbers   : ');
+            phone_count := 0;
+
+            FOR ph IN phone_cur(p_crew_id) LOOP
+                IF phone_count > 0 THEN
+                    DBMS_OUTPUT.PUT(', ');
+                END IF;
+                DBMS_OUTPUT.PUT(ph.Phone_No);
+                phone_count := phone_count + 1;
+            END LOOP;
+
+            IF phone_count = 0 THEN
+                RAISE no_phone_numbers;
+            END IF;
+            
+            DBMS_OUTPUT.NEW_LINE;
+            DBMS_OUTPUT.PUT_LINE('--------------------------------------------------');
+
+        EXCEPTION
+            WHEN no_phone_numbers THEN
+                DBMS_OUTPUT.PUT('N/A');
+                DBMS_OUTPUT.NEW_LINE;
+                DBMS_OUTPUT.PUT_LINE('--------------------------------------------------');
+            WHEN NO_DATA_FOUND THEN
+                DBMS_OUTPUT.PUT_LINE('Crew not found with Crew_ID = ' || p_crew_id);
+        END;
+    BEGIN
+        NULL;
+    END;
+
+    -- Step 2: Now print all crew roles
+    DBMS_OUTPUT.PUT_LINE('----- Pilot -----');
+    Print_Crew_Details_pk(v_pilot_id);
+
+    DBMS_OUTPUT.PUT_LINE('----- Co-Pilot -----');
+    Print_Crew_Details_pk(v_copilot_id);
+
+    DBMS_OUTPUT.PUT_LINE('----- Head Air Hostess -----');
+    Print_Crew_Details_pk(v_head_hostess_id);
+
+    DBMS_OUTPUT.PUT_LINE('----- Air Hostesses -----');
+    OPEN hostess_cur;
+    LOOP
+        FETCH hostess_cur INTO v_hostess_id;
+        EXIT WHEN hostess_cur%NOTFOUND;
+        Print_Crew_Details_pk(v_hostess_id);
+    END LOOP;
+    CLOSE hostess_cur;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No crew assigned to Flight ID = ' || p_flight_id);
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Unexpected error: ' || SQLERRM);
+END;
+
+CREATE OR REPLACE PROCEDURE Print_Crew_Details_By_Airline(p_airline_id IN INT)
+AS
+    -- Cursor for crew based on Airline_ID
+    CURSOR crew_cur IS
+        SELECT *
+        FROM Airline_Crew
+        WHERE Airline_ID = p_airline_id;
+
+    -- Cursor for phone numbers for each crew
+    CURSOR phone_cur(p_crew_id INT) IS
+        SELECT Phone_No
+        FROM Airline_Crew_Phone_No
+        WHERE Crew_ID = p_crew_id;
+
+    -- Variables
+    v_crew Airline_Crew%ROWTYPE;
+    v_phone Airline_Crew_Phone_No.Phone_No%TYPE;
+    phone_count INT;
+BEGIN
+    FOR v_crew IN crew_cur LOOP
+        -- Print basic crew details
+        DBMS_OUTPUT.PUT_LINE('Crew ID         : ' || v_crew.Crew_ID);
+        DBMS_OUTPUT.PUT_LINE('Name            : ' || v_crew.Crew_First_Name || ' ' || NVL(v_crew.Crew_Last_Name, ''));
+        DBMS_OUTPUT.PUT_LINE('Gender          : ' || v_crew.Crew_Gender);
+        DBMS_OUTPUT.PUT_LINE('Country         : ' || v_crew.Crew_Country);
+        DBMS_OUTPUT.PUT_LINE('Airline ID      : ' || v_crew.Airline_ID);
+
+        -- Now print phone numbers
+        DBMS_OUTPUT.PUT('Phone Numbers   : ');
+
+        phone_count := 0;
+
+        BEGIN
+            FOR v_phone IN phone_cur(v_crew.Crew_ID) LOOP
+                IF phone_count > 0 THEN
+                    DBMS_OUTPUT.PUT(', ');
+                END IF;
+                DBMS_OUTPUT.PUT(v_phone.Phone_No);
+                phone_count := phone_count + 1;
+            END LOOP;
+
+            IF phone_count = 0 THEN
+                RAISE_APPLICATION_ERROR(-20001, 'No phone numbers found');
+            END IF;
+
+            DBMS_OUTPUT.NEW_LINE;
+
+        EXCEPTION
+            WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT('N/A');
+                DBMS_OUTPUT.NEW_LINE;
+        END;
+
+        DBMS_OUTPUT.PUT_LINE('--------------------------------------------------');
+    END LOOP;
+END;
+
+
+CREATE OR REPLACE PROCEDURE Calculate_Aeroplane_Capacity(p_aeroplane_id IN INT)
+AS
+    v_aeroplane_type Aeroplanes.Aeroplane_Type%TYPE;
+    v_capacity_id Aeroplanes.Aeroplane_Capacity_ID%TYPE;
+    v_total_capacity INT;
+BEGIN
+    -- First, get Aeroplane_Type and Capacity ID
+    SELECT Aeroplane_Type, Aeroplane_Capacity_ID
+    INTO v_aeroplane_type, v_capacity_id
+    FROM Aeroplanes
+    WHERE Aeroplane_ID = p_aeroplane_id;
+
+    IF v_aeroplane_type = 'goods' THEN
+        -- Get capacity for goods aeroplane
+        SELECT Total_Capacity
+        INTO v_total_capacity
+        FROM Goods_Aeroplane_Capacity
+        WHERE Aeroplane_Capacity_ID = v_capacity_id;
+
+    ELSIF v_aeroplane_type = 'passenger' THEN
+        -- Sum all seats for passenger aeroplane
+        SELECT NVL(Business_Class_Seats,0) + NVL(Economy_Class_Seats,0) +
+               NVL(Premium_Economy_Class_Seats,0) + NVL(First_Class_Seats,0)
+        INTO v_total_capacity
+        FROM Passenger_Aeroplane_Capacity
+        WHERE Aeroplane_Capacity_ID = v_capacity_id;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Invalid Aeroplane Type');
+        RETURN;
+    END IF;
+
+    -- Output
+    DBMS_OUTPUT.PUT_LINE('Aeroplane ID     : ' || p_aeroplane_id);
+    DBMS_OUTPUT.PUT_LINE('Aeroplane Type   : ' || v_aeroplane_type);
+    DBMS_OUTPUT.PUT_LINE('Total Capacity   : ' || v_total_capacity);
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Aeroplane ID not found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Some error occurred: ' || SQLERRM);
+END;
+
+CREATE OR REPLACE PROCEDURE Calculate_Flight_Load(p_flight_id IN INT)
+AS
+    v_airline_aeroplane_id Scheduled_Flights.Airline_Aeroplane_ID%TYPE;
+    v_aeroplane_id Airline_Aeroplanes.Aeroplane_ID%TYPE;
+    v_aeroplane_type Aeroplanes.Aeroplane_Type%TYPE;
+    v_capacity_id Aeroplanes.Aeroplane_Capacity_ID%TYPE;
+    v_total_capacity INT;
+    v_current_load INT := 0;
+BEGIN
+    -- Step 1: Find Airline_Aeroplane_ID from Scheduled_Flights
+    SELECT Airline_Aeroplane_ID
+    INTO v_airline_aeroplane_id
+    FROM Scheduled_Flights
+    WHERE Flight_Scheduled_ID = p_flight_id;
+
+    -- Step 2: Find Aeroplane_ID from Airline_Aeroplanes
+    SELECT Aeroplane_ID
+    INTO v_aeroplane_id
+    FROM Airline_Aeroplanes
+    WHERE Airline_Aeroplanes_ID = v_airline_aeroplane_id;
+
+    -- Step 3: Find Aeroplane_Type and Capacity_ID from Aeroplanes
+    SELECT Aeroplane_Type, Aeroplane_Capacity_ID
+    INTO v_aeroplane_type, v_capacity_id
+    FROM Aeroplanes
+    WHERE Aeroplane_ID = v_aeroplane_id;
+
+    -- Step 4: Calculate total capacity
+    IF v_aeroplane_type = 'goods' THEN
+        SELECT Total_Capacity
+        INTO v_total_capacity
+        FROM Goods_Aeroplane_Capacity
+        WHERE Aeroplane_Capacity_ID = v_capacity_id;
+
+    ELSIF v_aeroplane_type = 'passenger' THEN
+        SELECT NVL(Business_Class_Seats,0) + NVL(Economy_Class_Seats,0) +
+               NVL(Premium_Economy_Class_Seats,0) + NVL(First_Class_Seats,0)
+        INTO v_total_capacity
+        FROM Passenger_Aeroplane_Capacity
+        WHERE Aeroplane_Capacity_ID = v_capacity_id;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Invalid Aeroplane Type');
+        RETURN;
+    END IF;
+
+    -- Step 5: Find current load
+    IF v_aeroplane_type = 'passenger' THEN
+        SELECT COUNT(*)
+        INTO v_current_load
+        FROM Passengers_Traveling
+        WHERE Flight_ID = p_flight_id;
+    ELSE
+        -- For goods, assuming some logic -- here we just assume FULL load
+        v_current_load := v_total_capacity;  -- or modify if you have goods data
+    END IF;
+
+    -- Step 6: Output
+    DBMS_OUTPUT.PUT_LINE('Flight ID               : ' || p_flight_id);
+    DBMS_OUTPUT.PUT_LINE('Aeroplane ID            : ' || v_aeroplane_id);
+    DBMS_OUTPUT.PUT_LINE('Aeroplane Type          : ' || v_aeroplane_type);
+    DBMS_OUTPUT.PUT_LINE('Total Capacity          : ' || v_total_capacity);
+    DBMS_OUTPUT.PUT_LINE('Current Load            : ' || v_current_load);
+    DBMS_OUTPUT.PUT_LINE('Load Percentage         : ' || ROUND(v_current_load / v_total_capacity * 100, 2) || '%');
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No data found for the provided Flight ID.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Some error occurred: ' || SQLERRM);
+END;
+
+CREATE OR REPLACE PROCEDURE Print_Flights_Same_Departure_Airport(
+    p_departure_airport_id IN INT
+)
+AS
+    v_flight_count INT := 0;
+    
+    CURSOR flight_cursor IS
+        SELECT Flight_Scheduled_ID, Airline_Aeroplane_ID, Arrival_Airport_ID,
+               Departure_Date_Time, Arrival_Date_Time
+        FROM Scheduled_Flights
+        WHERE Departure_Airport_ID = p_departure_airport_id;
+
+    v_flight_row flight_cursor%ROWTYPE;
+BEGIN
+    -- First count the number of flights
+    SELECT COUNT(*)
+    INTO v_flight_count
+    FROM Scheduled_Flights
+    WHERE Departure_Airport_ID = p_departure_airport_id;
+    
+    IF v_flight_count = 0 THEN
+        DBMS_OUTPUT.PUT_LINE('No flights found for the given departure airport: ' || p_departure_airport_id);
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Total number of flights departing from airport ' || p_departure_airport_id || ' : ' || v_flight_count);
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------------');
+
+        -- Then print the details
+        OPEN flight_cursor;
+        LOOP
+            FETCH flight_cursor INTO v_flight_row;
+            EXIT WHEN flight_cursor%NOTFOUND;
+
+            DBMS_OUTPUT.PUT_LINE('Flight Scheduled ID : ' || v_flight_row.Flight_Scheduled_ID);
+            DBMS_OUTPUT.PUT_LINE('Airline Aeroplane ID : ' || v_flight_row.Airline_Aeroplane_ID);
+            DBMS_OUTPUT.PUT_LINE('Arrival Airport ID  : ' || v_flight_row.Arrival_Airport_ID);
+            DBMS_OUTPUT.PUT_LINE('Departure Time      : ' || TO_CHAR(v_flight_row.Departure_Date_Time, 'DD-MON-YYYY HH24:MI'));
+            DBMS_OUTPUT.PUT_LINE('Arrival Time        : ' || TO_CHAR(v_flight_row.Arrival_Date_Time, 'DD-MON-YYYY HH24:MI'));
+            DBMS_OUTPUT.PUT_LINE('---------------------------------------------');
+        END LOOP;
+        CLOSE flight_cursor;
+    END IF;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error occurred: ' || SQLERRM);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Flights_Same_Arrival_Airport(
+    p_arrival_airport_id IN INT
+)
+AS
+    v_flight_count INT := 0;
+    
+    CURSOR flight_cursor IS
+        SELECT Flight_Scheduled_ID, Airline_Aeroplane_ID, Departure_Airport_ID,
+               Departure_Date_Time, Arrival_Date_Time
+        FROM Scheduled_Flights
+        WHERE Arrival_Airport_ID = p_arrival_airport_id;
+
+    v_flight_row flight_cursor%ROWTYPE;
+BEGIN
+    -- First count the number of flights
+    SELECT COUNT(*)
+    INTO v_flight_count
+    FROM Scheduled_Flights
+    WHERE Arrival_Airport_ID = p_arrival_airport_id;
+    
+    IF v_flight_count = 0 THEN
+        DBMS_OUTPUT.PUT_LINE('No flights found for the given arrival airport: ' || p_arrival_airport_id);
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Total number of flights arriving at airport ' || p_arrival_airport_id || ' : ' || v_flight_count);
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------------');
+
+        -- Then print the details
+        OPEN flight_cursor;
+        LOOP
+            FETCH flight_cursor INTO v_flight_row;
+            EXIT WHEN flight_cursor%NOTFOUND;
+
+            DBMS_OUTPUT.PUT_LINE('Flight Scheduled ID : ' || v_flight_row.Flight_Scheduled_ID);
+            DBMS_OUTPUT.PUT_LINE('Airline Aeroplane ID : ' || v_flight_row.Airline_Aeroplane_ID);
+            DBMS_OUTPUT.PUT_LINE('Departure Airport ID: ' || v_flight_row.Departure_Airport_ID);
+            DBMS_OUTPUT.PUT_LINE('Departure Time      : ' || TO_CHAR(v_flight_row.Departure_Date_Time, 'DD-MON-YYYY HH24:MI'));
+            DBMS_OUTPUT.PUT_LINE('Arrival Time        : ' || TO_CHAR(v_flight_row.Arrival_Date_Time, 'DD-MON-YYYY HH24:MI'));
+            DBMS_OUTPUT.PUT_LINE('---------------------------------------------');
+        END LOOP;
+        CLOSE flight_cursor;
+    END IF;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error occurred: ' || SQLERRM);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Print_Flights_Between_Airports(
+    p_departure_airport_id IN INT,
+    p_arrival_airport_id   IN INT
+)
+AS
+    v_flight_count INT := 0;
+    
+    CURSOR flight_cursor IS
+        SELECT Flight_Scheduled_ID, Airline_Aeroplane_ID,
+               Departure_Date_Time, Arrival_Date_Time
+        FROM Scheduled_Flights
+        WHERE Departure_Airport_ID = p_departure_airport_id
+          AND Arrival_Airport_ID = p_arrival_airport_id;
+
+    v_flight_row flight_cursor%ROWTYPE;
+BEGIN
+    -- First count matching flights
+    SELECT COUNT(*)
+    INTO v_flight_count
+    FROM Scheduled_Flights
+    WHERE Departure_Airport_ID = p_departure_airport_id
+      AND Arrival_Airport_ID = p_arrival_airport_id;
+    
+    IF v_flight_count = 0 THEN
+        DBMS_OUTPUT.PUT_LINE('No flights found between Departure Airport ' || p_departure_airport_id || 
+                             ' and Arrival Airport ' || p_arrival_airport_id);
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Total number of flights between Departure Airport ' || p_departure_airport_id || 
+                             ' and Arrival Airport ' || p_arrival_airport_id || ' : ' || v_flight_count);
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------------');
+
+        -- Then print flight details
+        OPEN flight_cursor;
+        LOOP
+            FETCH flight_cursor INTO v_flight_row;
+            EXIT WHEN flight_cursor%NOTFOUND;
+
+            DBMS_OUTPUT.PUT_LINE('Flight Scheduled ID : ' || v_flight_row.Flight_Scheduled_ID);
+            DBMS_OUTPUT.PUT_LINE('Airline Aeroplane ID : ' || v_flight_row.Airline_Aeroplane_ID);
+            DBMS_OUTPUT.PUT_LINE('Departure Time      : ' || TO_CHAR(v_flight_row.Departure_Date_Time, 'DD-MON-YYYY HH24:MI'));
+            DBMS_OUTPUT.PUT_LINE('Arrival Time        : ' || TO_CHAR(v_flight_row.Arrival_Date_Time, 'DD-MON-YYYY HH24:MI'));
+            DBMS_OUTPUT.PUT_LINE('---------------------------------------------');
+        END LOOP;
+        CLOSE flight_cursor;
+    END IF;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error occurred: ' || SQLERRM);
+END;
+
+CREATE OR REPLACE PROCEDURE Print_Flights_On_Date(
+    p_airport_id IN INT,
+    p_flight_date IN DATE
+)
+AS
+    v_flight_count INT := 0;
+
+    CURSOR flight_cursor IS
+        SELECT Flight_Scheduled_ID, Airline_Aeroplane_ID,
+               Departure_Airport_ID, Arrival_Airport_ID,
+               Departure_Date_Time, Arrival_Date_Time
+        FROM Scheduled_Flights
+        WHERE (TRUNC(Departure_Date_Time) = TRUNC(p_flight_date) AND Departure_Airport_ID = p_airport_id)
+           OR (TRUNC(Arrival_Date_Time) = TRUNC(p_flight_date) AND Arrival_Airport_ID = p_airport_id);
+
+    v_flight_row flight_cursor%ROWTYPE;
+BEGIN
+    -- First count flights
+    SELECT COUNT(*)
+    INTO v_flight_count
+    FROM Scheduled_Flights
+    WHERE (TRUNC(Departure_Date_Time) = TRUNC(p_flight_date) AND Departure_Airport_ID = p_airport_id)
+       OR (TRUNC(Arrival_Date_Time) = TRUNC(p_flight_date) AND Arrival_Airport_ID = p_airport_id);
+
+    IF v_flight_count = 0 THEN
+        DBMS_OUTPUT.PUT_LINE('No flights found at Airport ID ' || p_airport_id || ' on ' || TO_CHAR(p_flight_date, 'DD-MON-YYYY'));
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Total number of flights at Airport ID ' || p_airport_id || ' on ' || TO_CHAR(p_flight_date, 'DD-MON-YYYY') || ' : ' || v_flight_count);
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------------');
+
+        -- Print flight details
+        OPEN flight_cursor;
+        LOOP
+            FETCH flight_cursor INTO v_flight_row;
+            EXIT WHEN flight_cursor%NOTFOUND;
+
+            DBMS_OUTPUT.PUT_LINE('Flight Scheduled ID : ' || v_flight_row.Flight_Scheduled_ID);
+            DBMS_OUTPUT.PUT_LINE('Airline Aeroplane ID : ' || v_flight_row.Airline_Aeroplane_ID);
+            DBMS_OUTPUT.PUT_LINE('Departure Airport ID : ' || v_flight_row.Departure_Airport_ID);
+            DBMS_OUTPUT.PUT_LINE('Arrival Airport ID   : ' || v_flight_row.Arrival_Airport_ID);
+            DBMS_OUTPUT.PUT_LINE('Departure Time       : ' || TO_CHAR(v_flight_row.Departure_Date_Time, 'DD-MON-YYYY HH24:MI'));
+            DBMS_OUTPUT.PUT_LINE('Arrival Time         : ' || TO_CHAR(v_flight_row.Arrival_Date_Time, 'DD-MON-YYYY HH24:MI'));
+            DBMS_OUTPUT.PUT_LINE('---------------------------------------------');
+        END LOOP;
+        CLOSE flight_cursor;
+    END IF;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error occurred: ' || SQLERRM);
+END;
+
+CREATE OR REPLACE PROCEDURE Count_Flights_Of_Airline(
+    p_airline_id   IN INT,
+    p_start_date   IN DATE,
+    p_end_date     IN DATE,
+    p_airport_id   IN INT
+)
+AS
+    v_flight_count INT := 0;
+
+    CURSOR flight_cursor IS
+        SELECT Flight_Scheduled_ID, Airline_Aeroplane_ID,
+               Departure_Airport_ID, Arrival_Airport_ID,
+               Departure_Date_Time, Arrival_Date_Time
+        FROM Scheduled_Flights SF
+        JOIN Airline_Aeroplanes AA
+          ON SF.Airline_Aeroplane_ID = AA.Airline_Aeroplanes_ID
+        WHERE AA.Airline_ID = p_airline_id
+          AND (
+               (Departure_Airport_ID = p_airport_id AND Departure_Date_Time BETWEEN p_start_date AND p_end_date)
+            OR (Arrival_Airport_ID = p_airport_id AND Arrival_Date_Time BETWEEN p_start_date AND p_end_date)
+          );
+
+    v_flight_row flight_cursor%ROWTYPE;
+BEGIN
+    -- First count
+    SELECT COUNT(*)
+    INTO v_flight_count
+    FROM Scheduled_Flights SF
+    JOIN Airline_Aeroplanes AA
+      ON SF.Airline_Aeroplane_ID = AA.Airline_Aeroplanes_ID
+    WHERE AA.Airline_ID = p_airline_id
+      AND (
+           (Departure_Airport_ID = p_airport_id AND Departure_Date_Time BETWEEN p_start_date AND p_end_date)
+        OR (Arrival_Airport_ID = p_airport_id AND Arrival_Date_Time BETWEEN p_start_date AND p_end_date)
+      );
+
+    IF v_flight_count = 0 THEN
+        DBMS_OUTPUT.PUT_LINE('No flights found for Airline ID ' || p_airline_id || ' at Airport ID ' || p_airport_id || ' between ' || TO_CHAR(p_start_date, 'DD-MON-YYYY') || ' and ' || TO_CHAR(p_end_date, 'DD-MON-YYYY'));
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Total flights for Airline ID ' || p_airline_id || ' at Airport ID ' || p_airport_id || ' between ' || TO_CHAR(p_start_date, 'DD-MON-YYYY') || ' and ' || TO_CHAR(p_end_date, 'DD-MON-YYYY') || ' : ' || v_flight_count);
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------------');
+
+        -- Open and print flights
+        OPEN flight_cursor;
+        LOOP
+            FETCH flight_cursor INTO v_flight_row;
+            EXIT WHEN flight_cursor%NOTFOUND;
+
+            DBMS_OUTPUT.PUT_LINE('Flight Scheduled ID : ' || v_flight_row.Flight_Scheduled_ID);
+            DBMS_OUTPUT.PUT_LINE('Airline Aeroplane ID : ' || v_flight_row.Airline_Aeroplane_ID);
+            DBMS_OUTPUT.PUT_LINE('Departure Airport ID : ' || v_flight_row.Departure_Airport_ID);
+            DBMS_OUTPUT.PUT_LINE('Arrival Airport ID   : ' || v_flight_row.Arrival_Airport_ID);
+            DBMS_OUTPUT.PUT_LINE('Departure Time       : ' || TO_CHAR(v_flight_row.Departure_Date_Time, 'DD-MON-YYYY HH24:MI'));
+            DBMS_OUTPUT.PUT_LINE('Arrival Time         : ' || TO_CHAR(v_flight_row.Arrival_Date_Time, 'DD-MON-YYYY HH24:MI'));
+            DBMS_OUTPUT.PUT_LINE('---------------------------------------------');
+        END LOOP;
+        CLOSE flight_cursor;
+    END IF;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error occurred: ' || SQLERRM);
+END;
+
+CREATE OR REPLACE PROCEDURE Print_Flight_Details_By_ID(p_Flight_ID IN INT)
+AS
+    CURSOR flight_cursor IS
+        SELECT 
+            sf.Flight_Scheduled_ID,
+            sf.Flight_Type,
+            sf.Departure_Date_Time,
+            sf.Arrival_Date_Time,
+            sf.Destination_Distance,
+            
+            dep_airport.Airport_Name AS Departure_Airport_Name,
+            arr_airport.Airport_Name AS Arrival_Airport_Name,
+            
+            dep_terminal.Terminal_Name AS Departure_Terminal_Name,
+            arr_terminal.Terminal_Name AS Arrival_Terminal_Name,
+            
+            dep_runway.Runway_Name AS Departure_Runway_Name,
+            arr_runway.Runway_Name AS Arrival_Runway_Name,
+            
+            aa.Airline_ID,
+            al.Airline_Name,
+            
+            ap.Aeroplane_ID,
+            ap.Aeroplane_Type
+            
+        FROM Scheduled_Flights sf
+        JOIN Airline_Aeroplanes aa ON sf.Airline_Aeroplane_ID = aa.Airline_Aeroplanes_ID
+        JOIN Airlines al ON aa.Airline_ID = al.Airline_ID
+        JOIN Aeroplanes ap ON aa.Aeroplane_ID = ap.Aeroplane_ID
+        JOIN Airport dep_airport ON sf.Departure_Airport_ID = dep_airport.Airport_ID
+        JOIN Airport arr_airport ON sf.Arrival_Airport_ID = arr_airport.Airport_ID
+        JOIN Terminals dep_terminal ON sf.Departure_Terminal_ID = dep_terminal.Terminal_ID
+        JOIN Terminals arr_terminal ON sf.Arrival_Terminal_ID = arr_terminal.Terminal_ID
+        JOIN Runways dep_runway ON sf.Departure_Runway_ID = dep_runway.Runway_ID
+        JOIN Runways arr_runway ON sf.Arrival_Runway_ID = arr_runway.Runway_ID
+        WHERE sf.Flight_Scheduled_ID = p_Flight_ID;
+        
+    v_flight flight_cursor%ROWTYPE;
+BEGIN
+    OPEN flight_cursor;
+    FETCH flight_cursor INTO v_flight;
+    
+    IF flight_cursor%FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------------');
+        DBMS_OUTPUT.PUT_LINE('Flight Scheduled ID : ' || v_flight.Flight_Scheduled_ID);
+        DBMS_OUTPUT.PUT_LINE('Flight Type         : ' || v_flight.Flight_Type);
+        DBMS_OUTPUT.PUT_LINE('Departure Time      : ' || TO_CHAR(v_flight.Departure_Date_Time, 'DD-MON-YYYY HH24:MI'));
+        DBMS_OUTPUT.PUT_LINE('Arrival Time        : ' || TO_CHAR(v_flight.Arrival_Date_Time, 'DD-MON-YYYY HH24:MI'));
+        DBMS_OUTPUT.PUT_LINE('Destination Distance: ' || v_flight.Destination_Distance || ' km');
+        
+        DBMS_OUTPUT.PUT_LINE('Departure Airport   : ' || v_flight.Departure_Airport_Name);
+        DBMS_OUTPUT.PUT_LINE('Arrival Airport     : ' || v_flight.Arrival_Airport_Name);
+        
+        DBMS_OUTPUT.PUT_LINE('Departure Terminal  : ' || v_flight.Departure_Terminal_Name);
+        DBMS_OUTPUT.PUT_LINE('Arrival Terminal    : ' || v_flight.Arrival_Terminal_Name);
+        
+        DBMS_OUTPUT.PUT_LINE('Departure Runway    : ' || v_flight.Departure_Runway_Name);
+        DBMS_OUTPUT.PUT_LINE('Arrival Runway      : ' || v_flight.Arrival_Runway_Name);
+        
+        DBMS_OUTPUT.PUT_LINE('Airline ID          : ' || v_flight.Airline_ID);
+        DBMS_OUTPUT.PUT_LINE('Airline Name        : ' || v_flight.Airline_Name);
+        
+        DBMS_OUTPUT.PUT_LINE('Aeroplane ID        : ' || v_flight.Aeroplane_ID);
+        DBMS_OUTPUT.PUT_LINE('Aeroplane Type      : ' || v_flight.Aeroplane_Type);
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------------');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('No Flight found with Flight_Scheduled_ID = ' || p_Flight_ID);
+    END IF;
+    
+    CLOSE flight_cursor;
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+
+
+CREATE OR REPLACE PROCEDURE Find_Flights_From_Country_To_Country(
+    p_Departure_Country IN VARCHAR2,
+    p_Arrival_Country   IN VARCHAR2
+)
+AS
+    CURSOR flight_cursor IS
+        SELECT 
+            sf.Flight_Scheduled_ID,
+            sf.Flight_Type,
+            sf.Departure_Date_Time,
+            sf.Arrival_Date_Time,
+            dep_airport.Airport_Name AS Departure_Airport_Name,
+            arr_airport.Airport_Name AS Arrival_Airport_Name
+        FROM Scheduled_Flights sf
+        JOIN Airport dep_airport ON sf.Departure_Airport_ID = dep_airport.Airport_ID
+        JOIN Airport arr_airport ON sf.Arrival_Airport_ID = arr_airport.Airport_ID
+        WHERE dep_airport.Airport_Country = p_Departure_Country
+          AND arr_airport.Airport_Country = p_Arrival_Country;
+          
+    v_flight flight_cursor%ROWTYPE;
+    v_count  INT := 0;
+BEGIN
+    OPEN flight_cursor;
+    
+    LOOP
+        FETCH flight_cursor INTO v_flight;
+        EXIT WHEN flight_cursor%NOTFOUND;
+        
+        IF v_count = 0 THEN
+            DBMS_OUTPUT.PUT_LINE('Flights from ' || p_Departure_Country || ' to ' || p_Arrival_Country || ':');
+            DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------');
+        END IF;
+        
+        v_count := v_count + 1;
+        
+        DBMS_OUTPUT.PUT_LINE('Flight ID: ' || v_flight.Flight_Scheduled_ID);
+        DBMS_OUTPUT.PUT_LINE('Flight Type: ' || v_flight.Flight_Type);
+        DBMS_OUTPUT.PUT_LINE('Departure: ' || v_flight.Departure_Airport_Name || ' at ' || TO_CHAR(v_flight.Departure_Date_Time, 'DD-MON-YYYY HH24:MI'));
+        DBMS_OUTPUT.PUT_LINE('Arrival: ' || v_flight.Arrival_Airport_Name || ' at ' || TO_CHAR(v_flight.Arrival_Date_Time, 'DD-MON-YYYY HH24:MI'));
+        DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------');
+    END LOOP;
+    
+    IF v_count = 0 THEN
+        DBMS_OUTPUT.PUT_LINE('No flights found from ' || p_Departure_Country || ' to ' || p_Arrival_Country);
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Total flights found: ' || v_count);
+    END IF;
+    
+    CLOSE flight_cursor;
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+
+
+DECLARE
+BEGIN
+FIND_FLIGHTS_FROM_COUNTRY_TO_COUNTRY('India','Singapore');
+END;
+
+
+
