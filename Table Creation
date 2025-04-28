@@ -1,12 +1,12 @@
 CREATE TABLE Aeroplanes (
   Aeroplane_ID INT NOT NULL,
-  Aeroplane_Type VARCHAR2(10) check(Aeroplane_Type in ('goods','passenger')) NOT NULL,
+  Aeroplane_Type VARCHAR2(10) CHECK(Aeroplane_Type in ('goods','passenger')) NOT NULL,
   Aeroplane_Capacity_ID INT NOT NULL
 );
 
 CREATE TABLE Goods_Aeroplane_Capacity(
     Aeroplane_Capacity_ID INT NOT NULL,
-    Total_Capacity INT NOT NULL
+    Total_Capacity INT Check(Total_Capacity>0)
 );
 
 CREATE TABLE Passenger_Aeroplane_Capacity(
@@ -20,7 +20,7 @@ CREATE TABLE Passenger_Aeroplane_Capacity(
 CREATE TABLE Airline_Crew (
   Crew_ID INT NOT NULL,
   Crew_First_Name VARCHAR2(50) NOT NULL,
-  Crew_Last_Name VARCHAR2(50) NOT NULL,
+  Crew_Last_Name VARCHAR2(50),
   Crew_Gender CHAR(1) NOT NULL,
   Crew_Country VARCHAR2(20) NOT NULL,
   Airline_ID INT NOT NULL
@@ -49,8 +49,8 @@ CREATE TABLE Airport (
   Airport_Name VARCHAR2(100) NOT NULL,
   Airport_City VARCHAR2(100) NOT NULL,
   Airport_Country VARCHAR2(100) NOT NULL,
-  Total_Terminals INT NOT NULL,
-  Total_Runways INT NOT NULL
+  Total_Terminals INT CHECK(Total_Terminals > 0),
+  Total_Runways INT CHECK(Total_Runways > 0) 
 );
 
 CREATE TABLE Flight_Crew (
@@ -73,10 +73,10 @@ CREATE TABLE Scheduled_Flights (
   Airline_Aeroplane_ID INT NOT NULL,
   Departure_Airport_ID INT NOT NULL,
   Arrival_Airport_ID INT NOT NULL,
-  Flight_Type VARCHAR2(20) check(Flight_Type in ('Domestic','International')) NOT NULL,
+  Flight_Type VARCHAR2(20) CHECK(Flight_Type in ('Domestic','International')) NOT NULL,
   Arrival_Date_Time TIMESTAMP NOT NULL,
   Departure_Date_Time TIMESTAMP NOT NULL,
-  Destination_Distance INT NOT NULL,
+  Destination_Distance INT CHECK(Destination_Distance > 0) NOT NULL,
   Arrival_Terminal_ID INT NOT NULL,
   Departure_Terminal_ID INT NOT NULL,
   Arrival_Runway_ID INT NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE Passengers (
   Passenger_ID INT NOT NULL,
   Passenger_First_Name VARCHAR2(50) NOT NULL,
   Passenger_Last_Name VARCHAR2(50),
-  Passenger_Gender CHAR(1) check(Passenger_Gender in ('M','F','O')) NOT NULL,
+  Passenger_Gender CHAR(1) CHECK(Passenger_Gender in ('M','F','O')) NOT NULL,
   Passenger_Age INT NOT NULL
 );
 
