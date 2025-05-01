@@ -7,7 +7,7 @@ DECLARE
 BEGIN
   SELECT COUNT(*) INTO v_exists FROM Airline_Crew WHERE Crew_ID = :NEW.Crew_ID;
   IF v_exists = 0 THEN
-    RAISE_APPLICATION_ERROR(-22001, 'Referenced Crew_ID does not exist in Airline_Crew');
+    RAISE_APPLICATION_ERROR(-20049, 'Referenced Crew_ID does not exist in Airline_Crew');
   END IF;
 END;
 
@@ -23,11 +23,11 @@ DECLARE
 BEGIN
   SELECT COUNT(*) INTO v_airline FROM Airlines WHERE Airline_ID = :NEW.Airline_ID;
   IF v_airline = 0 THEN
-    RAISE_APPLICATION_ERROR(-22002, 'Referenced Airline_ID does not exist in Airlines');
+    RAISE_APPLICATION_ERROR(-20050, 'Referenced Airline_ID does not exist in Airlines');
   END IF;
   SELECT COUNT(*) INTO v_aeroplane FROM Aeroplanes WHERE Aeroplane_ID = :NEW.Aeroplane_ID;
   IF v_aeroplane = 0 THEN
-    RAISE_APPLICATION_ERROR(-22003, 'Referenced Aeroplane_ID does not exist in Aeroplanes');
+    RAISE_APPLICATION_ERROR(-20051, 'Referenced Aeroplane_ID does not exist in Aeroplanes');
   END IF;
 END;
 
@@ -43,11 +43,11 @@ DECLARE
 BEGIN
   SELECT COUNT(*) INTO v_flight_crew FROM Flight_Crew WHERE Flight_Crew_ID = :NEW.Flight_Crew_ID;
   IF v_flight_crew = 0 THEN
-    RAISE_APPLICATION_ERROR(-22004, 'Referenced Flight_Crew_ID does not exist in Flight_Crew');
+    RAISE_APPLICATION_ERROR(-20052, 'Referenced Flight_Crew_ID does not exist in Flight_Crew');
   END IF;
   SELECT COUNT(*) INTO v_airline_crew FROM Airline_Crew WHERE Crew_ID = :NEW.Airline_Crew_ID;
   IF v_airline_crew = 0 THEN
-    RAISE_APPLICATION_ERROR(-22005, 'Referenced Airline_Crew_ID does not exist in Airline_Crew');
+    RAISE_APPLICATION_ERROR(-20053, 'Referenced Airline_Crew_ID does not exist in Airline_Crew');
   END IF;
 END;
 
@@ -63,11 +63,11 @@ DECLARE
 BEGIN
   SELECT COUNT(*) INTO v_passenger FROM Passengers WHERE Passenger_ID = :NEW.Passenger_ID;
   IF v_passenger = 0 THEN
-    RAISE_APPLICATION_ERROR(-22006, 'Referenced Passenger_ID does not exist in Passengers');
+    RAISE_APPLICATION_ERROR(-20054, 'Referenced Passenger_ID does not exist in Passengers');
   END IF;
   SELECT COUNT(*) INTO v_flight_schedule FROM Scheduled_Flights WHERE Flight_Scheduled_ID = :NEW.Flight_ID;
   IF v_flight_schedule = 0 THEN
-    RAISE_APPLICATION_ERROR(-22007, 'Referenced Flight_Scheduled_ID does not exist in Scheduled_Flights');
+    RAISE_APPLICATION_ERROR(-20055, 'Referenced Flight_Scheduled_ID does not exist in Scheduled_Flights');
   END IF;
 END;
 
@@ -81,7 +81,7 @@ DECLARE
 BEGIN
   SELECT COUNT(*) INTO v_exists FROM Passengers WHERE Passenger_ID = :NEW.Passenger_ID;
   IF v_exists = 0 THEN
-    RAISE_APPLICATION_ERROR(-22008, 'Referenced Passenger_ID does not exist in Passengers');
+    RAISE_APPLICATION_ERROR(-20056, 'Referenced Passenger_ID does not exist in Passengers');
   END IF;
 END;
 
@@ -98,7 +98,7 @@ BEGIN
   SELECT COUNT(*) INTO v_goods FROM Goods_Aeroplane_Capacity WHERE Aeroplane_Capacity_ID = :NEW.Aeroplane_Capacity_ID;
   SELECT COUNT(*) INTO v_passenger FROM Passenger_Aeroplane_Capacity WHERE Aeroplane_Capacity_ID = :NEW.Aeroplane_Capacity_ID;
   IF v_goods = 0 AND v_passenger = 0 THEN
-    RAISE_APPLICATION_ERROR(-22009, 'Referenced Aeroplane_Capacity_ID not found in either capacity table');
+    RAISE_APPLICATION_ERROR(-20057, 'Referenced Aeroplane_Capacity_ID not found in either capacity table');
   END IF;
 END;
 
@@ -112,7 +112,7 @@ DECLARE
 BEGIN
   SELECT COUNT(*) INTO v_airline FROM Airlines WHERE Airline_ID = :NEW.Airline_ID;
   IF v_airline = 0 THEN
-    RAISE_APPLICATION_ERROR(-22010, 'Referenced Airline_ID does not exist in Airlines');
+    RAISE_APPLICATION_ERROR(-20058, 'Referenced Airline_ID does not exist in Airlines');
   END IF;
 END;
 
@@ -130,13 +130,13 @@ BEGIN
   SELECT COUNT(*) INTO v_copilot FROM Airline_Crew WHERE Crew_ID = :NEW.Copilot_ID;
   SELECT COUNT(*) INTO v_head_hostess FROM Airline_Crew WHERE Crew_ID = :NEW.Head_Air_Hostess_ID;
   IF v_pilot = 0 THEN
-    RAISE_APPLICATION_ERROR(-22011, 'Pilot_ID not found in Airline_Crew');
+    RAISE_APPLICATION_ERROR(-20059, 'Pilot_ID not found in Airline_Crew');
   END IF;
   IF v_copilot = 0 THEN
-    RAISE_APPLICATION_ERROR(-22012, 'Copilot_ID not found in Airline_Crew');
+    RAISE_APPLICATION_ERROR(-20060, 'Copilot_ID not found in Airline_Crew');
   END IF;
   IF v_head_hostess = 0 THEN
-    RAISE_APPLICATION_ERROR(-22013, 'Head_Air_Hostess_ID not found in Airline_Crew');
+    RAISE_APPLICATION_ERROR(-20061, 'Head_Air_Hostess_ID not found in Airline_Crew');
   END IF;
 END;
 
@@ -150,7 +150,7 @@ DECLARE
 BEGIN
   SELECT COUNT(*) INTO v_flight FROM Scheduled_Flights WHERE Flight_Scheduled_ID = :NEW.Flight_ID;
   IF v_flight = 0 THEN
-    RAISE_APPLICATION_ERROR(-22014, 'Referenced Flight_ID not found in Scheduled_Flights');
+    RAISE_APPLICATION_ERROR(-20062, 'Referenced Flight_ID not found in Scheduled_Flights');
   END IF;
 END;
 
@@ -164,7 +164,7 @@ DECLARE
 BEGIN
   SELECT COUNT(*) INTO v_plane FROM Airline_Aeroplanes WHERE Airline_Aeroplanes_ID = :NEW.Airline_Aeroplane_ID;
   IF v_plane = 0 THEN
-    RAISE_APPLICATION_ERROR(-22015, 'Airline_Aeroplane_ID not found in Airline_Aeroplanes');
+    RAISE_APPLICATION_ERROR(-20063, 'Airline_Aeroplane_ID not found in Airline_Aeroplanes');
   END IF;
 END;
 
@@ -191,13 +191,13 @@ BEGIN
   SELECT COUNT(*) INTO v_runway_dep FROM Runways WHERE Runway_ID = :NEW.Departure_Runway_ID;
 
   IF v_airport_dep = 0 OR v_airport_arr = 0 THEN
-    RAISE_APPLICATION_ERROR(-22016, 'One or both referenced Airport_IDs not found');
+    RAISE_APPLICATION_ERROR(-20064, 'One or both referenced Airport_IDs not found');
   END IF;
   IF v_term_arr = 0 OR v_term_dep = 0 THEN
-    RAISE_APPLICATION_ERROR(-22017, 'One or both referenced Terminal_IDs not found');
+    RAISE_APPLICATION_ERROR(-20065, 'One or both referenced Terminal_IDs not found');
   END IF;
   IF v_runway_arr = 0 OR v_runway_dep = 0 THEN
-    RAISE_APPLICATION_ERROR(-22018, 'One or both referenced Runway_IDs not found');
+    RAISE_APPLICATION_ERROR(-20066, 'One or both referenced Runway_IDs not found');
   END IF;
 END;
 
@@ -211,7 +211,7 @@ DECLARE
 BEGIN
   SELECT COUNT(*) INTO v_airport FROM Airport WHERE Airport_ID = :NEW.Airport_ID;
   IF v_airport = 0 THEN
-    RAISE_APPLICATION_ERROR(-22019, 'Referenced Airport_ID not found for Runway');
+    RAISE_APPLICATION_ERROR(-20067, 'Referenced Airport_ID not found for Runway');
   END IF;
 END;
 
@@ -225,6 +225,6 @@ DECLARE
 BEGIN
   SELECT COUNT(*) INTO v_airport FROM Airport WHERE Airport_ID = :NEW.Airport_ID;
   IF v_airport = 0 THEN
-    RAISE_APPLICATION_ERROR(-22020, 'Referenced Airport_ID not found for Terminal');
+    RAISE_APPLICATION_ERROR(-20068, 'Referenced Airport_ID not found for Terminal');
   END IF;
 END;
