@@ -60,8 +60,6 @@ CREATE OR REPLACE PROCEDURE Insert_Crew_With_Phones(
     p_First_Name    IN Airline_Crew.Crew_First_Name%TYPE,
     p_Last_Name     IN Airline_Crew.Crew_Last_Name%TYPE,
     p_Gender        IN Airline_Crew.Crew_Gender%TYPE,
-    p_Age           IN Airline_Crew.Crew_Age%TYPE,
-    p_Designation   IN Airline_Crew.Crew_Designation%TYPE,
     p_Phone_Nos     IN VARCHAR2 -- comma-separated string of phones
 )
 IS
@@ -74,16 +72,12 @@ BEGIN
         Crew_ID,
         Crew_First_Name,
         Crew_Last_Name,
-        Crew_Gender,
-        Crew_Age,
-        Crew_Designation
+        Crew_Gender
     ) VALUES (
         p_Crew_ID,
         p_First_Name,
         p_Last_Name,
-        p_Gender,
-        p_Age,
-        p_Designation
+        p_Gender
     );
     
     -- Insert each phone number one by one
@@ -92,12 +86,12 @@ BEGIN
         
         IF v_end = 0 THEN
             v_phone := SUBSTR(p_Phone_Nos, v_start);
-            INSERT INTO Crew_Phone_No (Crew_ID, Phone_No)
+            INSERT INTO Airline_Crew_Phone_No (Crew_ID, Phone_No)
             VALUES (p_Crew_ID, TO_NUMBER(TRIM(v_phone)));
             EXIT;
         ELSE
             v_phone := SUBSTR(p_Phone_Nos, v_start, v_end - v_start);
-            INSERT INTO Crew_Phone_No (Crew_ID, Phone_No)
+            INSERT INTO Airline_Crew_Phone_No (Crew_ID, Phone_No)
             VALUES (p_Crew_ID, TO_NUMBER(TRIM(v_phone)));
             v_start := v_end + 1;
         END IF;
