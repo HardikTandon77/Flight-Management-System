@@ -4,12 +4,20 @@ FOR EACH ROW
 DECLARE
   v_exists NUMBER;
 BEGIN
+  -- Check for NULL Aeroplane_ID
   IF :NEW.Aeroplane_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21001, 'Aeroplane_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Aeroplanes WHERE Aeroplane_ID = :NEW.Aeroplane_ID AND (:NEW.Aeroplane_ID != :OLD.Aeroplane_ID OR INSERTING);
-  IF v_exists > 0 THEN
-    RAISE_APPLICATION_ERROR(-21017, 'Aeroplane_ID already exists');
+
+  -- Perform uniqueness check if Aeroplane_ID is different or OLD is NULL (i.e., INSERT)
+  IF :OLD.Aeroplane_ID IS NULL OR :NEW.Aeroplane_ID != :OLD.Aeroplane_ID THEN
+    SELECT COUNT(*) INTO v_exists
+    FROM Aeroplanes
+    WHERE Aeroplane_ID = :NEW.Aeroplane_ID;
+
+    IF v_exists > 0 THEN
+      RAISE_APPLICATION_ERROR(-21017, 'Aeroplane_ID already exists');
+    END IF;
   END IF;
 END;
 
@@ -23,7 +31,7 @@ BEGIN
   IF :NEW.Aeroplane_Capacity_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21002, 'Aeroplane_Capacity_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Goods_Aeroplane_Capacity WHERE Aeroplane_Capacity_ID = :NEW.Aeroplane_Capacity_ID AND (:NEW.Aeroplane_Capacity_ID != :OLD.Aeroplane_Capacity_ID OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Goods_Aeroplane_Capacity WHERE Aeroplane_Capacity_ID = :NEW.Aeroplane_Capacity_ID AND (:OLD.Aeroplane_Capacity_ID IS NULL OR :NEW.Aeroplane_Capacity_ID != :OLD.Aeroplane_Capacity_ID);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21018, 'Aeroplane_Capacity_ID already exists');
   END IF;
@@ -39,7 +47,7 @@ BEGIN
   IF :NEW.Aeroplane_Capacity_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21003, 'Aeroplane_Capacity_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Passenger_Aeroplane_Capacity WHERE Aeroplane_Capacity_ID = :NEW.Aeroplane_Capacity_ID AND (:NEW.Aeroplane_Capacity_ID != :OLD.Aeroplane_Capacity_ID OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Passenger_Aeroplane_Capacity WHERE Aeroplane_Capacity_ID = :NEW.Aeroplane_Capacity_ID AND (:OLD.Aeroplane_Capacity_ID IS NULL OR :NEW.Aeroplane_Capacity_ID != :OLD.Aeroplane_Capacity_ID);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21019, 'Aeroplane_Capacity_ID already exists');
   END IF;
@@ -55,7 +63,7 @@ BEGIN
   IF :NEW.Crew_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21004, 'Crew_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Airline_Crew WHERE Crew_ID = :NEW.Crew_ID AND (:NEW.Crew_ID != :OLD.Crew_ID OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Airline_Crew WHERE Crew_ID = :NEW.Crew_ID AND (:OLD.Crew_ID IS NULL OR :NEW.Crew_ID != :OLD.Crew_ID);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21020, 'Crew_ID already exists');
   END IF;
@@ -71,7 +79,7 @@ BEGIN
   IF :NEW.Crew_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21005, 'Crew_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Airline_Crew_Phone_No WHERE Crew_ID = :NEW.Crew_ID AND Phone_No = :NEW.Phone_No AND (:NEW.Crew_ID != :OLD.Crew_ID OR :NEW.Phone_No != :OLD.Phone_No OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Airline_Crew_Phone_No WHERE Crew_ID = :NEW.Crew_ID AND Phone_No = :NEW.Phone_No AND (:OLD.Crew_ID IS NULL OR :OLD.Phone_No IS NULL OR :NEW.Crew_ID != :OLD.Crew_ID OR :NEW.Phone_No != :OLD.Phone_No);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21021, 'Crew_ID and Phone_No combination already exists');
   END IF;
@@ -87,7 +95,7 @@ BEGIN
   IF :NEW.Airline_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21006, 'Airline_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Airlines WHERE Airline_ID = :NEW.Airline_ID AND (:NEW.Airline_ID != :OLD.Airline_ID OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Airlines WHERE Airline_ID = :NEW.Airline_ID AND (:OLD.Airline_ID IS NULL OR :NEW.Airline_ID != :OLD.Airline_ID);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21022, 'Airline_ID already exists');
   END IF;
@@ -103,7 +111,7 @@ BEGIN
   IF :NEW.Airline_Aeroplanes_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21007, 'Airline_Aeroplanes_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Airline_Aeroplanes WHERE Airline_Aeroplanes_ID = :NEW.Airline_Aeroplanes_ID AND (:NEW.Airline_Aeroplanes_ID != :OLD.Airline_Aeroplanes_ID OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Airline_Aeroplanes WHERE Airline_Aeroplanes_ID = :NEW.Airline_Aeroplanes_ID AND (:OLD.Airline_Aeroplanes_ID IS NULL OR :NEW.Airline_Aeroplanes_ID != :OLD.Airline_Aeroplanes_ID);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21023, 'Airline_Aeroplanes_ID already exists');
   END IF;
@@ -119,7 +127,7 @@ BEGIN
   IF :NEW.Airport_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21008, 'Airport_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Airport WHERE Airport_ID = :NEW.Airport_ID AND (:NEW.Airport_ID != :OLD.Airport_ID OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Airport WHERE Airport_ID = :NEW.Airport_ID AND (:OLD.Airport_ID IS NULL OR :NEW.Airport_ID != :OLD.Airport_ID);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21024, 'Airport_ID already exists');
   END IF;
@@ -135,7 +143,7 @@ BEGIN
   IF :NEW.Flight_Crew_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21009, 'Flight_Crew_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Flight_Crew WHERE Flight_Crew_ID = :NEW.Flight_Crew_ID AND (:NEW.Flight_Crew_ID != :OLD.Flight_Crew_ID OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Flight_Crew WHERE Flight_Crew_ID = :NEW.Flight_Crew_ID AND (:OLD.Flight_Crew_ID IS NULL OR :NEW.Flight_Crew_ID != :OLD.Flight_Crew_ID);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21025, 'Flight_Crew_ID already exists');
   END IF;
@@ -151,7 +159,7 @@ BEGIN
   IF :NEW.Flight_Crew_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21010, 'Flight_Crew_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Flight_Crew_Hostess WHERE Flight_Crew_ID = :NEW.Flight_Crew_ID AND Airline_Crew_ID = :NEW.Airline_Crew_ID AND (:NEW.Flight_Crew_ID != :OLD.Flight_Crew_ID OR :NEW.Airline_Crew_ID != :OLD.Airline_Crew_ID OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Flight_Crew_Hostess WHERE Flight_Crew_ID = :NEW.Flight_Crew_ID AND Airline_Crew_ID = :NEW.Airline_Crew_ID AND (:OLD.Flight_Crew_ID IS NULL OR :OLD.Airline_Crew_ID IS NULL OR :NEW.Flight_Crew_ID != :OLD.Flight_Crew_ID OR :NEW.Airline_Crew_ID != :OLD.Airline_Crew_ID);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21026, 'Flight_Crew_ID and Airline_Crew_ID combination already exists');
   END IF;
@@ -167,7 +175,7 @@ BEGIN
   IF :NEW.Flight_Scheduled_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21011, 'Flight_Scheduled_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Scheduled_Flights WHERE Flight_Scheduled_ID = :NEW.Flight_Scheduled_ID AND (:NEW.Flight_Scheduled_ID != :OLD.Flight_Scheduled_ID OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Scheduled_Flights WHERE Flight_Scheduled_ID = :NEW.Flight_Scheduled_ID AND (:OLD.Flight_Scheduled_ID IS NULL OR :NEW.Flight_Scheduled_ID != :OLD.Flight_Scheduled_ID);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21027, 'Flight_Scheduled_ID already exists');
   END IF;
@@ -183,7 +191,7 @@ BEGIN
   IF :NEW.Passenger_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21012, 'Passenger_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Passengers WHERE Passenger_ID = :NEW.Passenger_ID AND (:NEW.Passenger_ID != :OLD.Passenger_ID OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Passengers WHERE Passenger_ID = :NEW.Passenger_ID AND (:OLD.Passenger_ID IS NULL OR :NEW.Passenger_ID != :OLD.Passenger_ID);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21028, 'Passenger_ID already exists');
   END IF;
@@ -199,7 +207,7 @@ BEGIN
   IF :NEW.Passenger_Traveling_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21013, 'Passenger_Traveling_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Passengers_Traveling WHERE Passenger_Traveling_ID = :NEW.Passenger_Traveling_ID AND (:NEW.Passenger_Traveling_ID != :OLD.Passenger_Traveling_ID OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Passengers_Traveling WHERE Passenger_Traveling_ID = :NEW.Passenger_Traveling_ID AND (:OLD.Passenger_Traveling_ID IS NULL OR :NEW.Passenger_Traveling_ID != :OLD.Passenger_Traveling_ID);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21029, 'Passenger_Traveling_ID already exists');
   END IF;
@@ -215,7 +223,7 @@ BEGIN
   IF :NEW.Passenger_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21014, 'Passenger_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Passenger_Phone_No WHERE Passenger_ID = :NEW.Passenger_ID AND Phone_No = :NEW.Phone_No AND (:NEW.Passenger_ID != :OLD.Passenger_ID OR :NEW.Phone_No != :OLD.Phone_No OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Passenger_Phone_No WHERE Passenger_ID = :NEW.Passenger_ID AND Phone_No = :NEW.Phone_No AND (:OLD.Passenger_ID IS NULL OR :OLD.Phone_No IS NULL OR :NEW.Passenger_ID != :OLD.Passenger_ID OR :NEW.Phone_No != :OLD.Phone_No);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21030, 'Passenger_ID and Phone_No combination already exists');
   END IF;
@@ -231,7 +239,7 @@ BEGIN
   IF :NEW.Runway_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21015, 'Runway_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Runways WHERE Runway_ID = :NEW.Runway_ID AND (:NEW.Runway_ID != :OLD.Runway_ID OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Runways WHERE Runway_ID = :NEW.Runway_ID AND (:OLD.Runway_ID IS NULL OR :NEW.Runway_ID != :OLD.Runway_ID);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21031, 'Runway_ID already exists');
   END IF;
@@ -247,7 +255,7 @@ BEGIN
   IF :NEW.Terminal_ID IS NULL THEN
     RAISE_APPLICATION_ERROR(-21016, 'Terminal_ID cannot be NULL');
   END IF;
-  SELECT COUNT(*) INTO v_exists FROM Terminals WHERE Terminal_ID = :NEW.Terminal_ID AND (:NEW.Terminal_ID != :OLD.Terminal_ID OR INSERTING);
+  SELECT COUNT(*) INTO v_exists FROM Terminals WHERE Terminal_ID = :NEW.Terminal_ID AND (:OLD.Terminal_ID IS NULL OR :NEW.Terminal_ID != :OLD.Terminal_ID);
   IF v_exists > 0 THEN
     RAISE_APPLICATION_ERROR(-21032, 'Terminal_ID already exists');
   END IF;
