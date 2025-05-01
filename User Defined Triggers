@@ -17,7 +17,7 @@ BEGIN
     END IF;
 EXCEPTION
     WHEN invalid_flight_type THEN
-        RAISE_APPLICATION_ERROR(-20004, 'ERROR: Flight Type must match Airport IDs! (Domestic/International)');
+        RAISE_APPLICATION_ERROR(-20069, 'ERROR: Flight Type must match Airport IDs! (Domestic/International)');
 END;
 
 
@@ -32,7 +32,7 @@ BEGIN
     END IF;
 EXCEPTION
     WHEN invalid_terminal_runway THEN
-        RAISE_APPLICATION_ERROR(-20005, 'ERROR: Total Terminals and Total Runways must be greater than 0!');
+        RAISE_APPLICATION_ERROR(-20070, 'ERROR: Total Terminals and Total Runways must be greater than 0!');
 END;
 
 
@@ -47,7 +47,7 @@ BEGIN
     END IF;
 EXCEPTION
     WHEN invalid_distance THEN
-        RAISE_APPLICATION_ERROR(-20006, 'ERROR: Destination Distance must be greater than 0!');
+        RAISE_APPLICATION_ERROR(-20071, 'ERROR: Destination Distance must be greater than 0!');
 END;
 
 CREATE OR REPLACE TRIGGER trg_Check_Hostess_Insert
@@ -74,7 +74,7 @@ BEGIN
 
     -- 3. Now compare
     IF hostess_count_after_insert > max_hostess_allowed THEN
-        RAISE_APPLICATION_ERROR(-20011, 'ERROR: Hostess count exceeds allowed No_of_Air_Hostess for this flight.');
+        RAISE_APPLICATION_ERROR(-20072, 'ERROR: Hostess count exceeds allowed No_of_Air_Hostess for this flight.');
     END IF;
 END;
 
@@ -90,7 +90,7 @@ BEGIN
 
     -- Check if digits are exactly 5
     IF v_digit_count != 5 THEN
-        RAISE_APPLICATION_ERROR(-20012, 'ERROR: Phone number must have exactly 5 digits.');
+        RAISE_APPLICATION_ERROR(-20073, 'ERROR: Phone number must have exactly 5 digits.');
     END IF;
 END;
 
@@ -106,7 +106,7 @@ BEGIN
 
     -- Check if digits are exactly 5
     IF v_digit_count != 5 THEN
-        RAISE_APPLICATION_ERROR(-20013, 'ERROR: Crew Phone number must have exactly 5 digits.');
+        RAISE_APPLICATION_ERROR(-20074, 'ERROR: Crew Phone number must have exactly 5 digits.');
     END IF;
 END;
 
@@ -124,7 +124,7 @@ BEGIN
 
     -- Check if total capacity is > 0
     IF v_total_capacity <= 0 THEN
-        RAISE_APPLICATION_ERROR(-20014, 'ERROR: Total Passenger Plane capacity must be greater than 0.');
+        RAISE_APPLICATION_ERROR(-20075, 'ERROR: Total Passenger Plane capacity must be greater than 0.');
     END IF;
 END;
 
@@ -149,17 +149,16 @@ BEGIN
         WHERE Aeroplane_Capacity_ID = :NEW.Aeroplane_Capacity_ID;
         
     ELSE
-        RAISE_APPLICATION_ERROR(-20010, 'Invalid Aeroplane Type: must be goods or passenger');
+        RAISE_APPLICATION_ERROR(-20076, 'Invalid Aeroplane Type: must be goods or passenger');
     END IF;
     
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
         IF :NEW.Aeroplane_Type = 'goods' THEN
-            RAISE_APPLICATION_ERROR(-20011, 'Aeroplane_Capacity_ID not found in Goods_Aeroplane_Capacity');
+            RAISE_APPLICATION_ERROR(-20077, 'Aeroplane_Capacity_ID not found in Goods_Aeroplane_Capacity');
         ELSIF :NEW.Aeroplane_Type = 'passenger' THEN
-            RAISE_APPLICATION_ERROR(-20012, 'Aeroplane_Capacity_ID not found in Passenger_Aeroplane_Capacity');
+            RAISE_APPLICATION_ERROR(-20078, 'Aeroplane_Capacity_ID not found in Passenger_Aeroplane_Capacity');
         END IF;
     WHEN OTHERS THEN
-        RAISE_APPLICATION_ERROR(-20013, 'Unexpected error occurred in capacity trigger');
+        RAISE_APPLICATION_ERROR(-20079, 'Unexpected error occurred in capacity trigger');
 END;
-
