@@ -55,7 +55,7 @@ END;
 -- Passengers_Traveling.Passenger_ID references Passengers.Passenger_ID
 -- Passengers_Traveling.Flight_Scheduled_ID references Scheduled_Flights.Flight_Scheduled_ID
 CREATE OR REPLACE TRIGGER trg_fk_passengers_traveling_fk
-BEFORE INSERT OR UPDATE OF Passenger_ID, Flight_Scheduled_ID ON Passengers_Traveling
+BEFORE INSERT OR UPDATE OF Passenger_ID, Flight_ID ON Passengers_Traveling
 FOR EACH ROW
 DECLARE
   v_passenger NUMBER;
@@ -65,7 +65,7 @@ BEGIN
   IF v_passenger = 0 THEN
     RAISE_APPLICATION_ERROR(-22006, 'Referenced Passenger_ID does not exist in Passengers');
   END IF;
-  SELECT COUNT(*) INTO v_flight_schedule FROM Scheduled_Flights WHERE Flight_Scheduled_ID = :NEW.Flight_Scheduled_ID;
+  SELECT COUNT(*) INTO v_flight_schedule FROM Scheduled_Flights WHERE Flight_Scheduled_ID = :NEW.Flight_ID;
   IF v_flight_schedule = 0 THEN
     RAISE_APPLICATION_ERROR(-22007, 'Referenced Flight_Scheduled_ID does not exist in Scheduled_Flights');
   END IF;
