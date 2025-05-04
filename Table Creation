@@ -147,7 +147,7 @@ ADD CONSTRAINT airline_aeroplanes_pk PRIMARY KEY(Airline_Aeroplanes_ID);
 ALTER TABLE Airline_Aeroplanes
 ADD CONSTRAINT airline_aeroplanes_fk1 FOREIGN KEY (Airline_ID) REFERENCES Airlines(Airline_ID);
 ALTER TABLE Airline_Aeroplanes
-ADD CONSTRAINT airline_aeroplanes_fk2 FOREIGN KEY (Aeroplane_ID) REFERENCES Airlines(Airline_ID);
+ADD CONSTRAINT airline_aeroplanes_fk2 FOREIGN KEY (Aeroplane_ID) REFERENCES Aeroplanes(Aeroplane_ID);
 
 ALTER TABLE Airport
 ADD CONSTRAINT airport_pk PRIMARY KEY (Airport_ID);
