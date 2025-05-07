@@ -211,3 +211,132 @@ ALTER TABLE Terminals
 ADD CONSTRAINT terminals_pk PRIMARY KEY(Terminal_ID);
 ALTER TABLE Terminals
 ADD CONSTRAINT terminals_fk FOREIGN KEY(Airport_ID) REFERENCES Airport(Airport_ID);
+
+
+
+
+
+-- Aeroplanes
+ALTER TABLE Aeroplanes DROP CONSTRAINT Aeroplane_fk1;
+ALTER TABLE Aeroplanes DROP CONSTRAINT Aeroplane_fk2;
+
+-- Airline_Crew
+ALTER TABLE Airline_Crew DROP CONSTRAINT Airline_crew_fk;
+
+-- Airline_Crew_Phone_No has no FK to drop (already handled below)
+
+-- Airline_Aeroplanes
+ALTER TABLE Airline_Aeroplanes DROP CONSTRAINT airline_aeroplanes_fk1;
+ALTER TABLE Airline_Aeroplanes DROP CONSTRAINT airline_aeroplanes_fk2;
+
+-- Flight_Crew
+ALTER TABLE Flight_Crew DROP CONSTRAINT flight_id_fk;
+ALTER TABLE Flight_Crew DROP CONSTRAINT pilot_id_fk;
+ALTER TABLE Flight_Crew DROP CONSTRAINT copilot_id_fk;
+ALTER TABLE Flight_Crew DROP CONSTRAINT head_hostess_id_fk;
+
+-- Flight_Crew_Hostess
+ALTER TABLE Flight_Crew_Hostess DROP CONSTRAINT flight_crew_fk;
+ALTER TABLE Flight_Crew_Hostess DROP CONSTRAINT airline_crew_hostess_fk;
+
+-- Scheduled_Flights
+ALTER TABLE Scheduled_Flights DROP CONSTRAINT scheduled_flights_fk1;
+ALTER TABLE Scheduled_Flights DROP CONSTRAINT scheduled_flights_fk2;
+ALTER TABLE Scheduled_Flights DROP CONSTRAINT scheduled_flights_fk3;
+ALTER TABLE Scheduled_Flights DROP CONSTRAINT scheduled_flights_fk4;
+ALTER TABLE Scheduled_Flights DROP CONSTRAINT scheduled_flights_fk5;
+ALTER TABLE Scheduled_Flights DROP CONSTRAINT scheduled_flights_fk6;
+ALTER TABLE Scheduled_Flights DROP CONSTRAINT scheduled_flights_fk7;
+
+-- Passengers_Traveling
+ALTER TABLE Passengers_Traveling DROP CONSTRAINT passengers_traveling_fk1;
+ALTER TABLE Passengers_Traveling DROP CONSTRAINT passengers_traveling_fk2;
+
+-- Passenger_Phone_No
+ALTER TABLE Passenger_Phone_No DROP CONSTRAINT passenger_phone_no_fk;
+
+-- Runways
+ALTER TABLE Runways DROP CONSTRAINT runways_fk;
+
+-- Terminals
+ALTER TABLE Terminals DROP CONSTRAINT terminals_fk;
+
+
+-- Aeroplanes
+ALTER TABLE Aeroplanes ADD CONSTRAINT Aeroplane_fk1
+  FOREIGN KEY (Aeroplane_Capacity_ID) REFERENCES Goods_Aeroplane_Capacity(Aeroplane_Capacity_ID) ON DELETE CASCADE;
+
+ALTER TABLE Aeroplanes ADD CONSTRAINT Aeroplane_fk2
+  FOREIGN KEY (Aeroplane_Capacity_ID) REFERENCES Passenger_Aeroplane_Capacity(Aeroplane_Capacity_ID) ON DELETE CASCADE;
+
+-- Airline_Crew
+ALTER TABLE Airline_Crew ADD CONSTRAINT Airline_crew_fk
+  FOREIGN KEY (Airline_ID) REFERENCES Airlines(Airline_ID) ON DELETE CASCADE;
+
+-- Airline_Aeroplanes
+ALTER TABLE Airline_Aeroplanes ADD CONSTRAINT airline_aeroplanes_fk1
+  FOREIGN KEY (Airline_ID) REFERENCES Airlines(Airline_ID) ON DELETE CASCADE;
+
+ALTER TABLE Airline_Aeroplanes ADD CONSTRAINT airline_aeroplanes_fk2
+  FOREIGN KEY (Aeroplane_ID) REFERENCES Aeroplanes(Aeroplane_ID) ON DELETE CASCADE;
+
+-- Flight_Crew
+ALTER TABLE Flight_Crew ADD CONSTRAINT pilot_id_fk
+  FOREIGN KEY (Pilot_ID) REFERENCES Airline_Crew(Crew_ID) ON DELETE CASCADE;
+
+ALTER TABLE Flight_Crew ADD CONSTRAINT copilot_id_fk
+  FOREIGN KEY (Copilot_ID) REFERENCES Airline_Crew(Crew_ID) ON DELETE CASCADE;
+
+ALTER TABLE Flight_Crew ADD CONSTRAINT head_hostess_id_fk
+  FOREIGN KEY (Head_Air_Hostess_ID) REFERENCES Airline_Crew(Crew_ID) ON DELETE CASCADE;
+
+ALTER TABLE Flight_Crew ADD CONSTRAINT flight_id_fk
+  FOREIGN KEY (Flight_ID) REFERENCES Scheduled_Flights(Flight_Scheduled_ID) ON DELETE CASCADE;
+
+-- Flight_Crew_Hostess
+ALTER TABLE Flight_Crew_Hostess ADD CONSTRAINT flight_crew_fk
+  FOREIGN KEY (Flight_Crew_ID) REFERENCES Flight_Crew(Flight_Crew_ID) ON DELETE CASCADE;
+
+ALTER TABLE Flight_Crew_Hostess ADD CONSTRAINT airline_crew_hostess_fk
+  FOREIGN KEY (Airline_Crew_ID) REFERENCES Airline_Crew(Crew_ID) ON DELETE CASCADE;
+
+-- Scheduled_Flights
+ALTER TABLE Scheduled_Flights ADD CONSTRAINT scheduled_flights_fk1
+  FOREIGN KEY (Airline_Aeroplane_ID) REFERENCES Airline_Aeroplanes(Airline_Aeroplanes_ID) ON DELETE CASCADE;
+
+ALTER TABLE Scheduled_Flights ADD CONSTRAINT scheduled_flights_fk2
+  FOREIGN KEY (Departure_Airport_ID) REFERENCES Airport(Airport_ID) ON DELETE CASCADE;
+
+ALTER TABLE Scheduled_Flights ADD CONSTRAINT scheduled_flights_fk3
+  FOREIGN KEY (Arrival_Airport_ID) REFERENCES Airport(Airport_ID) ON DELETE CASCADE;
+
+ALTER TABLE Scheduled_Flights ADD CONSTRAINT scheduled_flights_fk4
+  FOREIGN KEY (Arrival_Terminal_ID) REFERENCES Terminals(Terminal_ID) ON DELETE CASCADE;
+
+ALTER TABLE Scheduled_Flights ADD CONSTRAINT scheduled_flights_fk5
+  FOREIGN KEY (Departure_Terminal_ID) REFERENCES Terminals(Terminal_ID) ON DELETE CASCADE;
+
+ALTER TABLE Scheduled_Flights ADD CONSTRAINT scheduled_flights_fk6
+  FOREIGN KEY (Arrival_Runway_ID) REFERENCES Runways(Runway_ID) ON DELETE CASCADE;
+
+ALTER TABLE Scheduled_Flights ADD CONSTRAINT scheduled_flights_fk7
+  FOREIGN KEY (Departure_Runway_ID) REFERENCES Runways(Runway_ID) ON DELETE CASCADE;
+
+-- Passengers_Traveling
+ALTER TABLE Passengers_Traveling ADD CONSTRAINT passengers_traveling_fk1
+  FOREIGN KEY (Passenger_ID) REFERENCES Passengers(Passenger_ID) ON DELETE CASCADE;
+
+ALTER TABLE Passengers_Traveling ADD CONSTRAINT passengers_traveling_fk2
+  FOREIGN KEY (Flight_ID) REFERENCES Scheduled_Flights(Flight_Scheduled_ID) ON DELETE CASCADE;
+
+-- Passenger_Phone_No
+ALTER TABLE Passenger_Phone_No ADD CONSTRAINT passenger_phone_no_fk
+  FOREIGN KEY (Passenger_ID) REFERENCES Passengers(Passenger_ID) ON DELETE CASCADE;
+
+-- Runways
+ALTER TABLE Runways ADD CONSTRAINT runways_fk
+  FOREIGN KEY (Airport_ID) REFERENCES Airport(Airport_ID) ON DELETE CASCADE;
+
+-- Terminals
+ALTER TABLE Terminals ADD CONSTRAINT terminals_fk
+  FOREIGN KEY (Airport_ID) REFERENCES Airport(Airport_ID) ON DELETE CASCADE;
