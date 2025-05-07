@@ -2,22 +2,33 @@ CREATE OR REPLACE TRIGGER trg_Check_Flight_Type_Smart
 BEFORE INSERT OR UPDATE OF Flight_Type, Departure_Airport_ID, Arrival_Airport_ID ON Scheduled_Flights
 FOR EACH ROW
 DECLARE
+    dep_country VARCHAR2(100);
+    arr_country VARCHAR2(100);
     invalid_flight_type EXCEPTION;
 BEGIN
-    IF :NEW.Departure_Airport_ID = :NEW.Arrival_Airport_ID THEN
-        -- Same airport => must be Domestic
+    -- Get countries of departure and arrival airports
+    SELECT Airport_Country INTO dep_country
+    FROM Airport
+    WHERE Airport_ID = :NEW.Departure_Airport_ID;
+
+    SELECT Airport_Country INTO arr_country
+    FROM Airport
+    WHERE Airport_ID = :NEW.Arrival_Airport_ID;
+
+    IF dep_country = arr_country THEN
+        -- Same country => Domestic
         IF :NEW.Flight_Type != 'Domestic' THEN
             RAISE invalid_flight_type;
         END IF;
     ELSE
-        -- Different airports => must be International
+        -- Different countries => International
         IF :NEW.Flight_Type != 'International' THEN
             RAISE invalid_flight_type;
         END IF;
     END IF;
 EXCEPTION
     WHEN invalid_flight_type THEN
-        RAISE_APPLICATION_ERROR(-20069, 'ERROR: Flight Type must match Airport IDs! (Domestic/International)');
+        RAISE_APPLICATION_ERROR(-20069, 'ERROR: Flight Type must match countries of Departure and Arrival Airports (Domestic/International).');
 END;
 
 
