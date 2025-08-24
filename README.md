@@ -50,11 +50,26 @@ A robust database management solution for **airline operations**, implemented us
 ---
 
 ## How to Run
-1. **Setup Oracle Database** (SQL*Plus or SQL Developer).  
-2. Run scripts in **Table Creation/** to create all tables.  
-3. Run triggers in **PK Triggers/** and **FK Triggers/** to enable validations.  
-4. Run procedures from **Data Insertion/**, **Insertion Procedures/**, and **User Defined Procedures/**.  
-5. Test functionalities using **Select * Procedures/** or custom SQL queries.
+
+1. **Set up Oracle Database**
+   - Option 1: Install Oracle Database locally and use **SQL*Plus** or **Oracle SQL Developer**.
+   - Option 2: Use **Oracle Live SQL** (https://livesql.oracle.com/) for running scripts online.
+
+2. **Create Database Schema**
+   - Navigate to the `Table Creation/` folder and run all SQL scripts to create the normalized database tables.
+
+3. **Add Constraints and Triggers**
+   - Execute scripts in `PK Triggers/` and `FK Triggers/` to enforce primary key and foreign key constraints.
+   - Run scripts in `Triggers for Insertion/`, `Triggers for Deletion/`, and `User Defined Triggers/` to enable business rule validations.
+
+4. **Load Data**
+   - Run scripts in `Data Insertion/`, `Insertion Procedures/`, and `User Defined Insertion/` to populate the database.
+
+5. **Enable Procedures**
+   - Execute procedures from `User Defined Procedures/`, `PK Select Procedures/`, and `Select * Procedures/` for operations like ticket generation, passenger retrieval, and flight capacity checks.
+
+6. **Test the System**
+   - Use SQL queries from `Select * Procedures/` or create your own queries to verify database functionality.
 
 ---
 
