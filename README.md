@@ -74,7 +74,7 @@ A robust database management solution for **airline operations**, implemented us
 ---
 
 ## ER Diagram
-[ER_Diagram](/ER_Diagram.png)
+![ER Diagram](ER_Diagram.png)
 
 ---
 
